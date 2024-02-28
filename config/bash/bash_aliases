@@ -1,0 +1,5 @@
+alias git-diff="git diff --word-diff=color --word-diff-regex='.'"
+alias git-status="git -c color.status=always status"
+alias git-log="git log --graph --format=%Cgreen%as__%Cblue%h__%Creset%s --color=always"
+alias l='ls --color -Aoh'
+alias r=ranger

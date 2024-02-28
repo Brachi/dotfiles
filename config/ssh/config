@@ -1,0 +1,7 @@
+Host github.com
+    Hostname github.com
+    IdentityFile ~/.ssh/id_ecdsa_sk_rk
+
+Host gitlab.com
+    Hostname gitlab.com
+    IdentityFile ~/.ssh/id_ecdsa_sk_rk

@@ -1,0 +1,21 @@
+FILE=~/.bash_aliases && test -f $FILE && source $FILE
+
+export BROWSER=firefox
+export EDITOR=nvim
+export GPG_TTY=$(tty)
+export HISTFILE=$HOME/.cache/bash_history
+export HISTSIZE=10000
+export HISTTIMEFORMAT="%s "
+export LESSHISTFILE=/dev/null
+export PATH=$PATH:$HOME/.local/bin:$HOME/.local/share/cargo/bin:/opt/cuda/bin
+export PS1="\w > "
+
+# Software specific
+export EM_CACHE=$HOME/.cache/emscripten
+export npm_config_cache=$HOME/.cache/npm
+export CARGO_HOME=$HOME/.local/share/cargo
+export PYTHONSTARTUP=$HOME/.config/python/site.py
+export RUSTUP_HOME=$HOME/.local/share/rustup
+export XAUTHORITY=$HOME/.cache/.Xauthority
+export XINITRC=$HOME/.config/xorg/xinitrc
+export XWALLPAPER=$HOME/.local/share/wallpapers/current

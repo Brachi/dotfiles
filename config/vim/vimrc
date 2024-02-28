@@ -1,0 +1,37 @@
+scriptencoding utf-8
+
+colorscheme habamax
+syntax on
+
+set background=dark
+set encoding=utf-8
+set foldmethod=syntax
+set foldcolumn=1
+set foldtext=getline(v:foldstart)
+set hlsearch
+set laststatus=2
+set list listchars=tab:>-,trail:•,extends:#,nbsp:.
+set nobackup
+set nomodeline
+set noswapfile
+set nowritebackup
+set number
+set secure
+set shortmess+=I
+set showmatch
+set splitright
+set statusline=%l/%L\ %f
+" set viminfo in a standard place and not at home
+set viminfo+=n~/.cache/viminfo
+
+setlocal expandtab autoindent smartindent tabstop=4 softtabstop=4 shiftwidth=4
+
+au BufWinEnter * normal zR
+filetype plugin on
+filetype plugin indent on
+
+let g:netrw_list_hide= '.*\.pyc$,.*\.swp$'
+let g:netrw_liststyle=3
+
+map <C-\> :rightb vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+vmap <C-c> y: call system("xclip -i -selection clipboard", getreg("\""))<CR>

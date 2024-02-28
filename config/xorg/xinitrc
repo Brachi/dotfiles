@@ -1,0 +1,7 @@
+#!/bin/sh
+
+setxkbmap us -variant altgr-intl
+xcompmgr &
+xwallpaper --maximize $XWALLPAPER
+
+exec dwm
