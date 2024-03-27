@@ -42,6 +42,7 @@ firejail
 gnupg
 pass
 pcsclite
+x11-ssh-askpass  # necessary for ssh-agent to work with fido2 resident keys
 
 [dev]
 direnv
@@ -65,9 +66,13 @@ pulseaudio-alsa
 pulsemixer
 
 [gui]
+redshift
 ttf-hack
 xcompmgr
 xwallpaper
 
 [utils]
+gnome-screenshot
+p7zip
+unrar
 xdg-utils
