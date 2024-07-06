@@ -8,4 +8,6 @@
 [include]
 	path = ~/.config/git/config_local
 [pull]
-	rebase = true
+    rebase = true
+[push]
+    autoSetupRemote = true
