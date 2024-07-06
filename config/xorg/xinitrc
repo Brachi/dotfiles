@@ -7,7 +7,7 @@ mon_qty=$(mons | grep Monitors | cut -d ":" -f 2)
 if [ $mon_qty == "2" ]; then
     mons -s
     # TODO: don't hardcode
-    xrandr --output HDMI2 --mode 3440x1440
+    xrandr --output HDMI1 --mode 3440x1440
 fi
 
 xcompmgr &
