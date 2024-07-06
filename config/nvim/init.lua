@@ -1,16 +1,32 @@
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
 
-
-vim.o.number = true
-vim.cmd("colorscheme habamax")
-vim.o.statusline = "%l/%L %f"
-
-
-vim.o.expandtab = true
-vim.o.tabstop = 4
-vim.o.list = true
+vim.opt.number = true
+vim.opt.statusline = "%l/%L %f"
+vim.opt.clipboard = 'unnamedplus'
+vim.opt.expandtab = true
+vim.opt.tabstop = 4
+vim.opt.list = true
+vim.opt.autoindent = true
+vim.opt.smartindent = true
 vim.opt.listchars:append {
     tab = ">-",
-    multispace = space,
     nbsp = ".",
     trail = "•"
 }
+
+-- Bootstrap lazy.nvim
+-- https://lazy.folke.io/installation
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+end
+vim.opt.rtp:prepend(lazypath)
+
+require("lazy").setup({
+  spec = {
+    { import = "plugins" },
+  },
+  checker = { enabled = true },
+})
