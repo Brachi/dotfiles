@@ -43,6 +43,8 @@ gnupg
 pass
 pcsclite
 x11-ssh-askpass  # necessary for ssh-agent to work with fido2 resident keys
+kguiaddons  # for pinentry-qt
+kwindowsystem   # for pinentry-qt
 
 [dev]
 direnv
@@ -53,6 +55,7 @@ man-db
 nodejs
 npm
 python
+ripgrep
 rustup
 watchexec
 
