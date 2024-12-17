@@ -11,11 +11,9 @@ export PATH=$PATH:$HOME/.local/bin:$HOME/.local/share/cargo/bin:/opt/cuda/bin
 export PS1="\w > "
 
 # Software specific
+export CARGO_HOME=$HOME/.local/share/cargo
 export EM_CACHE=$HOME/.cache/emscripten
 export npm_config_cache=$HOME/.cache/npm
-export CARGO_HOME=$HOME/.local/share/cargo
+export PASSWORD_STORE_DIR=$HOME/Documents/Vault/password-store
 export PYTHONSTARTUP=$HOME/.config/python/site.py
 export RUSTUP_HOME=$HOME/.local/share/rustup
-export XAUTHORITY=$HOME/.cache/.Xauthority
-export XINITRC=$HOME/.config/xorg/xinitrc
-export XWALLPAPER=$HOME/.local/share/wallpapers/current
