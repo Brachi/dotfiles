@@ -1,0 +1,8 @@
+PermitRootLogin no
+PubkeyAuthentication no
+PasswordAuthentication no
+
+
+Match Group allowssh
+    PubkeyAuthentication yes
+
