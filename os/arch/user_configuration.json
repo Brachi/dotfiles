@@ -1,9 +1,11 @@
 {
     "additional-repositories": [],
     "archinstall-language": "English",
+    "audio_config": {
+        "audio": "pipewire"
+    },
     "bootloader": "Systemd-boot",
-    "config_version": "2.8.6",
-    "debug": false,
+    "config_version": "3.0.1",
     "disk_config": {
         "config_type": "manual_partitioning",
         "device_modifications": [
@@ -14,8 +16,8 @@
                         "btrfs": [],
                         "dev_path": null,
                         "flags": [
-                            "Boot",
-                            "ESP"
+                            "boot",
+                            "esp"
                         ],
                         "fs_type": "fat32",
                         "mount_options": [],
@@ -88,12 +90,11 @@
         "sys_enc": "UTF-8",
         "sys_lang": "en_US"
     },
+    "mirror_config": null,
     "network_config": {
         "type": "nm"
     },
-    "no_pkg_lookups": false,
     "ntp": true,
-    "offline": false,
     "packages": [
         "alacritty",
         "plasma-meta",
@@ -147,12 +148,10 @@
         "vulkan-intel"
     ],
     "parallel downloads": 0,
-    "script": "guided",
-    "silent": false,
-    "skip_ntp": false,
-    "skip_version_check": false,
+    "profile_config": null,
+    "save_config": null,
     "swap": true,
-    "timezone": "UTC",
+    "timezone": "America/Chicago",
     "uki": true,
-    "version": "2.8.6"
+    "version": "3.0.1"
 }
