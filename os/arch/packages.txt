@@ -43,7 +43,7 @@ rustup
 sddm
 sof-firmware
 steam
-ttf-hack
+ttf-hack-nerd
 tmux
 unrar
 unzip
