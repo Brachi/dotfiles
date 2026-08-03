@@ -7,6 +7,7 @@ SRC_XDG_CONFIG="$SCRIPT_DIR/config"
 DST_XDG_CONFIG=$HOME/.config/
 
 ln -fs "$SRC_XDG_CONFIG/alacritty" $DST_XDG_CONFIG
+ln -fs "$SRC_XDG_CONFIG/git" $DST_XDG_CONFIG
 ln -fs "$SRC_XDG_CONFIG/nvim" $DST_XDG_CONFIG
 ln -fs "$SRC_XDG_CONFIG/ranger" $DST_XDG_CONFIG
 ln -fs "$SRC_XDG_CONFIG/tmux" $DST_XDG_CONFIG
