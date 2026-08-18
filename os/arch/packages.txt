@@ -45,6 +45,7 @@ sof-firmware
 steam
 ttf-hack-nerd
 tmux
+tree-sitter-cli
 unrar
 unzip
 watchexec
