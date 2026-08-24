@@ -32,14 +32,31 @@ To edit by hand instead, replace the two `CHANGEME` values in `user_configuratio
 `disk_config.device_modifications[0].device`, and partition `[1]`'s `size.value`
 (`(disk size in GiB) - 2`, leaving ~1 GiB for the ESP and a small alignment gap).
 
+## Credentials
+
+`user_configuration.json` has `"silent": true`, which disables *all* prompts —
+including authentication. **Without a `--creds` file, archinstall does not fall back to
+asking interactively: it silently installs a system with root locked (shadow entry `*`)
+and no user account, i.e. nothing can log in.** This was verified directly (installed,
+then inspected `/etc/shadow` and `/etc/passwd` on the target). A creds file is mandatory,
+not optional.
+
+Generate one with `generate_creds.py` (same live-ISO session as `template_config.py`):
+
+```sh
+python generate_creds.py
+```
+
+It prompts for a username, a password for that user, and the LUKS passphrase, then
+writes `user_credentials.json` — password-hashed, gitignored, never committed. Root is
+deliberately left locked (no `root_enc_password`); administer via the sudo user instead.
+Pass `--username` to skip the username prompt.
+
 ## Running
 
 ```sh
-archinstall --config user_configuration.generated.json
+archinstall --config user_configuration.generated.json --creds user_credentials.json
 ```
-
-No passwords are stored in this file (LUKS passphrase, root/user password). archinstall
-will prompt for those interactively; everything else runs unattended (`silent: true`).
 
 ## Notes
 
