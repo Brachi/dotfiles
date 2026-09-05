@@ -224,6 +224,8 @@ def main() -> None:
         template_cmd += ["--device", args.device]
     run(template_cmd)
 
+    run([sys.executable, str(HERE / "check_packages.py"), "--config", str(args.config)])
+
     generated = json.loads(args.config.read_text())
     device = generated["disk_config"]["device_modifications"][0]["device"]
     hostname = generated.get("hostname", "CHANGEME")

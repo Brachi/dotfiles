@@ -13,7 +13,7 @@ packages = [
     "base-devel", "ccid", "chafa", "direnv", "efibootmgr", "exfat-utils",
     "firejail", "git", "git-lfs", "gnupg", "htop", "intel-ucode",
     "libfido2", "linux", "linux-firmware", "man-db", "man-pages",
-    "networkmanager", "nmap", "openssh", "p7zip", "pacman-contrib",
+    "networkmanager", "nmap", "openssh", "7zip", "pacman-contrib",
     "pass", "pcsclite", "ranger", "ripgrep", "rsync", "sof-firmware",
     "tmux", "tree-sitter-cli", "unrar", "unzip", "watchexec", "yazi",
     "yubikey-manager", "zip", "zram-generator",
@@ -22,9 +22,9 @@ packages = [
 [tags.dev]
 # Matches this laptop's CLI dev stack.
 packages = [
-    "cmake", "docker", "emscripten", "github-cli", "kaitai-struct-compiler",
-    "neovim", "nodejs", "npm", "patchelf", "python", "radare2", "rustup",
-    "sbt", "wabt", "wasmer", "wasmtime",
+    "cmake", "docker", "emscripten", "github-cli", "neovim", "nodejs", "npm",
+    "patchelf", "python", "radare2", "rustup", "sbt", "wabt", "wasmer",
+    "wasmtime",
 ]
 
 [tags.desktop]
@@ -33,8 +33,8 @@ packages = [
     "adobe-source-sans-fonts", "alacritty", "chromium", "cups", "cups-pdf",
     "firefox", "gedit", "gst-plugin-pipewire", "konsole", "libinput-tools",
     "libpulse", "network-manager-applet", "pipewire", "pipewire-alsa",
-    "pipewire-jack", "pipewire-pulse", "plasma-meta", "qt5-remoteobjects",
-    "qt5-wayland", "qt5-webengine", "sddm", "skanpage", "spectacle",
+    "pipewire-jack", "pipewire-pulse", "plasma-meta", "qt5-wayland",
+    "sddm", "skanpage", "spectacle",
     "system-config-printer", "ttf-hack-nerd", "ttf-roboto", "vulkan-intel",
     "wireplumber", "wl-clipboard",
 ]
