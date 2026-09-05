@@ -1,16 +1,21 @@
 {
-    "additional-repositories": [],
     "archinstall-language": "English",
-    "audio_config": {
-        "audio": "pipewire"
+    "app_config": {
+        "audio_config": {
+            "audio": "pipewire"
+        }
     },
-    "bootloader": "Systemd-boot",
-    "config_version": "3.0.1",
+    "bootloader_config": {
+        "bootloader": "Systemd-boot",
+        "uki": true,
+        "removable": false
+    },
     "disk_config": {
-        "config_type": "manual_partitioning",
+        "config_type": "default_layout",
         "device_modifications": [
             {
-                "device": "/dev/nvme0n1",
+                "device": "/dev/CHANGEME",
+                "wipe": true,
                 "partitions": [
                     {
                         "btrfs": [],
@@ -22,14 +27,14 @@
                         "fs_type": "fat32",
                         "mount_options": [],
                         "mountpoint": "/boot",
-                        "obj_id": "35c11a3f-182f-4f46-a84d-3fd9d4eef19d",
+                        "obj_id": "c64b919c-63e1-4422-a98f-84b43ba6eba3",
                         "size": {
                             "sector_size": {
                                 "unit": "B",
                                 "value": 512
                             },
-                            "unit": "GiB",
-                            "value": 1
+                            "unit": "MiB",
+                            "value": 1024
                         },
                         "start": {
                             "sector_size": {
@@ -49,109 +54,63 @@
                         "fs_type": "ext4",
                         "mount_options": [],
                         "mountpoint": "/",
-                        "obj_id": "e46bd5c9-80d7-4432-b20a-515d760b7efb",
+                        "obj_id": "44572032-793c-420c-a7cc-ee86fc6f8d2a",
                         "size": {
                             "sector_size": {
                                 "unit": "B",
                                 "value": 512
                             },
-                            "unit": "B",
-                            "value": 999129047040
+                            "unit": "GiB",
+                            "value": 999999
                         },
                         "start": {
                             "sector_size": {
                                 "unit": "B",
                                 "value": 512
                             },
-                            "unit": "B",
-                            "value": 1074790400
+                            "unit": "MiB",
+                            "value": 1025
                         },
                         "status": "create",
                         "type": "primary"
                     }
-                ],
-                "wipe": false
+                ]
             }
-        ]
+        ],
+        "disk_encryption": {
+            "encryption_type": "luks",
+            "lvm_volumes": [],
+            "partitions": [
+                "44572032-793c-420c-a7cc-ee86fc6f8d2a"
+            ]
+        }
     },
-    "disk_encryption": {
-        "encryption_type": "luks",
-        "lvm_volumes": [],
-        "partitions": [
-            "e46bd5c9-80d7-4432-b20a-515d760b7efb"
-        ]
-    },
-    "hostname": "nuc13i7",
+    "hostname": "CHANGEME",
     "kernels": [
         "linux"
     ],
     "locale_config": {
+        "console_font": "ter-132n",
         "kb_layout": "us",
         "sys_enc": "UTF-8",
         "sys_lang": "en_US"
     },
     "mirror_config": null,
     "network_config": {
-        "type": "nm"
+        "type": "nm_iwd"
     },
     "ntp": true,
-    "packages": [
-        "alacritty",
-        "plasma-meta",
-        "sddm",
-        "base-devel",
-        "beets",
-        "blender",
-        "caddy",
-        "chafa",
-        "chromium",
-        "cmake",
-        "neovim",
-        "git",
-        "cups",
-        "cups-pdf",
-        "yazi",
-        "libfido2",
-        "python",
-        "rustup",
-        "npm",
-        "git-lfs",
-        "pass",
-        "gnupg",
-        "direnv",
-        "elisa",
-        "koko",
-        "spectacle",
-        "emscripten",
-        "exfat-utils",
-        "htop",
-        "firefox",
-        "openssh",
-        "yazi",
-        "tmux",
-        "unzip",
-        "wl-clipboard",
-        "libfido2",
-        "firejail",
-        "gnupg",
-        "pass",
-        "pcsclite",
-        "git-lfs",
-        "man-db",
-        "nodejs",
-        "npm",
-        "python",
-        "rustup",
-        "ripgrep",
-        "watchexec",
-        "unrar",
-        "vulkan-intel"
-    ],
-    "parallel downloads": 0,
+    "packages": [],
+    "pacman_config": {
+        "parallel_downloads": 5
+    },
     "profile_config": null,
-    "save_config": null,
-    "swap": true,
+    "script": "guided",
+    "silent": true,
+    "swap": {
+        "enabled": true,
+        "algorithm": "zstd"
+    },
     "timezone": "America/Chicago",
-    "uki": true,
-    "version": "3.0.1"
+    "version": "4.4"
 }
