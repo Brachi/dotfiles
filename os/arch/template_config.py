@@ -33,27 +33,31 @@ ROOT_START_MIB = ESP_START_MIB + ESP_SIZE_MIB
 END_RESERVE_MIB = 2  # headroom for the GPT backup header at the end of the disk
 
 
-def live_usb_device() -> str | None:
-    """Best-effort identification of the disk backing the live ISO boot medium,
-    so it never ends up in the candidate list (this script wipes whatever
-    disk it targets)."""
-    try:
-        mount_src = subprocess.run(
-            ["findmnt", "-no", "SOURCE", "/run/archiso/bootmnt"],
-            check=True, capture_output=True, text=True,
-        ).stdout.strip()
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return None
-    if not mount_src:
-        return None
-    pkname = subprocess.run(
-        ["lsblk", "-no", "PKNAME", mount_src],
+def live_boot_disks() -> set[str]:
+    """Disks that must never be offered as install targets, so the live boot
+    medium can't be wiped out from under itself.
+
+    Originally this looked only at what's mounted on /run/archiso/bootmnt, but
+    on real hardware that path can resolve through a loop/overlay mount rather
+    than the raw partition, silently failing to exclude anything - the live
+    USB then showed up as a selectable target. Instead, exclude every disk
+    that currently has ANY mounted partition: the boot medium always has
+    something mounted (that's how you're running this script at all), while a
+    genuine target disk on a fresh live boot has nothing mounted on it yet.
+    """
+    out = subprocess.run(
+        ["lsblk", "-n", "-o", "PKNAME,MOUNTPOINT"],
         capture_output=True, text=True,
-    ).stdout.strip()
-    return f"/dev/{pkname}" if pkname else mount_src
+    ).stdout
+    excluded = set()
+    for line in out.splitlines():
+        pkname, _, mountpoint = line.strip().partition(" ")
+        if pkname and mountpoint.strip():
+            excluded.add(f"/dev/{pkname}")
+    return excluded
 
 
-def list_disks(exclude: str | None) -> list[dict]:
+def list_disks(exclude: set[str]) -> list[dict]:
     out = subprocess.run(
         ["lsblk", "-J", "-b", "-o", "NAME,PATH,SIZE,TYPE,RO"],
         check=True, capture_output=True, text=True,
@@ -66,7 +70,7 @@ def list_disks(exclude: str | None) -> list[dict]:
         # backed by real hardware (they have a /sys/block/<name>/device link).
         if not Path("/sys/block", dev["name"], "device").exists():
             continue
-        if exclude and dev["path"] == exclude:
+        if dev["path"] in exclude:
             continue
         disks.append({"path": dev["path"], "size": int(dev["size"])})
     return disks
@@ -110,7 +114,7 @@ def main() -> None:
     if args.device:
         target = {"path": args.device, "size": disk_size(args.device)}
     else:
-        target = pick_disk(list_disks(exclude=live_usb_device()))
+        target = pick_disk(list_disks(exclude=live_boot_disks()))
 
     root_size_mib = (target["size"] // (1024 * 1024)) - ROOT_START_MIB - END_RESERVE_MIB
     if root_size_mib <= 0:
