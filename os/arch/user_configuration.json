@@ -96,7 +96,7 @@
     },
     "mirror_config": null,
     "network_config": {
-        "type": "nm"
+        "type": "nm_iwd"
     },
     "ntp": true,
     "packages": [
@@ -137,6 +137,7 @@
         "firejail",
         "pcsclite",
         "man-db",
+        "network-manager-applet",
         "nodejs",
         "ripgrep",
         "watchexec",

@@ -21,6 +21,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from contextlib import contextmanager
 from pathlib import Path
 
 HERE = Path(__file__).parent
@@ -100,16 +101,14 @@ def nth_partition(device: str, n: int) -> str:
     sys.exit(f"Could not find partition {n} on {device}.")
 
 
-def provision_ssh_access(device: str, username: str, luks_passphrase: str, pubkeys: list[str]) -> None:
-    """Authorize the collected SSH public keys for `username` on the
-    just-installed system, and harden sshd to disable password auth. Does its
-    own open/mount/chroot/close cycle against the target root partition
-    rather than relying on archinstall's mount still being live at this
-    point - keeps this correct regardless of whether archinstall unmounts on
-    exit."""
+@contextmanager
+def mounted_target(device: str, luks_passphrase: str):
+    """Open/mount the just-installed root partition for post-install
+    touch-ups, independent of whatever mount state archinstall left behind
+    at exit (undocumented, so not something to rely on)."""
     root_partition = nth_partition(device, 2)
-    mapper_name = "arch_ssh_provision"
-    mnt = Path(tempfile.mkdtemp(prefix="arch-ssh-"))
+    mapper_name = "arch_post_install"
+    mnt = Path(tempfile.mkdtemp(prefix="arch-post-install-"))
     try:
         opened = subprocess.run(
             ["cryptsetup", "open", root_partition, mapper_name, "--key-file", "-"],
@@ -117,35 +116,60 @@ def provision_ssh_access(device: str, username: str, luks_passphrase: str, pubke
         )
         root_device = f"/dev/mapper/{mapper_name}" if opened.returncode == 0 else root_partition
         run(["mount", root_device, str(mnt)])
-
-        passwd_line = next(
-            line for line in Path(mnt, "etc/passwd").read_text().splitlines()
-            if line.startswith(f"{username}:")
-        )
-        uid, gid = (int(x) for x in passwd_line.split(":")[2:4])
-
-        ssh_dir = Path(mnt, "home", username, ".ssh")
-        ssh_dir.mkdir(mode=0o700, exist_ok=True)
-        os.chown(ssh_dir, uid, gid)
-        authorized_keys = ssh_dir / "authorized_keys"
-        authorized_keys.write_text("\n".join(pubkeys) + "\n")
-        authorized_keys.chmod(0o600)
-        os.chown(authorized_keys, uid, gid)
-
-        sshd_dropin = Path(mnt, "etc/ssh/sshd_config.d/10-harden.conf")
-        sshd_dropin.parent.mkdir(parents=True, exist_ok=True)
-        sshd_dropin.write_text(
-            "PasswordAuthentication no\n"
-            "KbdInteractiveAuthentication no\n"
-            "PubkeyAuthentication yes\n"
-        )
-
-        run(["arch-chroot", str(mnt), "systemctl", "enable", "sshd.service"])
-        print(f"Authorized {len(pubkeys)} SSH key(s) for {username}, disabled SSH password auth.")
+        yield mnt
     finally:
         subprocess.run(["umount", str(mnt)])
         subprocess.run(["cryptsetup", "close", mapper_name])
         mnt.rmdir()
+
+
+def provision_ssh_access(mnt: Path, username: str, pubkeys: list[str]) -> None:
+    """Authorize the collected SSH public keys for `username` on the target,
+    and harden sshd to disable password auth."""
+    passwd_line = next(
+        line for line in Path(mnt, "etc/passwd").read_text().splitlines()
+        if line.startswith(f"{username}:")
+    )
+    uid, gid = (int(x) for x in passwd_line.split(":")[2:4])
+
+    ssh_dir = Path(mnt, "home", username, ".ssh")
+    ssh_dir.mkdir(mode=0o700, exist_ok=True)
+    os.chown(ssh_dir, uid, gid)
+    authorized_keys = ssh_dir / "authorized_keys"
+    authorized_keys.write_text("\n".join(pubkeys) + "\n")
+    authorized_keys.chmod(0o600)
+    os.chown(authorized_keys, uid, gid)
+
+    sshd_dropin = Path(mnt, "etc/ssh/sshd_config.d/10-harden.conf")
+    sshd_dropin.parent.mkdir(parents=True, exist_ok=True)
+    sshd_dropin.write_text(
+        "PasswordAuthentication no\n"
+        "KbdInteractiveAuthentication no\n"
+        "PubkeyAuthentication yes\n"
+    )
+
+    run(["arch-chroot", str(mnt), "systemctl", "enable", "sshd.service"])
+    print(f"Authorized {len(pubkeys)} SSH key(s) for {username}, disabled SSH password auth.")
+
+
+def copy_wifi_config(mnt: Path) -> int:
+    """Copy the live environment's iwd network profiles (saved by `iwctl
+    connect`) to the target, so wifi that's already working here keeps
+    working after reboot. archinstall only does this automatically for
+    network_config type "iso" - we use "nm_iwd" instead (NetworkManager, for
+    a proper GUI applet on the desktop, with iwd as its backend), which
+    doesn't carry these over on its own. iwd reads its known-networks from
+    this same path regardless of whether it's run standalone or driven by
+    NetworkManager, so a plain file copy is enough."""
+    live_iwd = Path("/var/lib/iwd")
+    psks = list(live_iwd.glob("*.psk")) if live_iwd.exists() else []
+    if not psks:
+        return 0
+    target_iwd = Path(mnt, "var/lib/iwd")
+    target_iwd.mkdir(parents=True, exist_ok=True)
+    for psk in psks:
+        shutil.copy2(psk, target_iwd / psk.name)
+    return len(psks)
 
 
 def main() -> None:
@@ -199,8 +223,13 @@ def main() -> None:
 
     run(["archinstall", "--config", str(args.config), "--creds", str(args.creds)])
 
-    if pubkeys:
-        provision_ssh_access(device, username, luks_passphrase, pubkeys)
+    has_wifi = bool(list(Path("/var/lib/iwd").glob("*.psk"))) if Path("/var/lib/iwd").exists() else False
+    if pubkeys or has_wifi:
+        with mounted_target(device, luks_passphrase) as mnt:
+            if pubkeys:
+                provision_ssh_access(mnt, username, pubkeys)
+            if wifi_count := copy_wifi_config(mnt):
+                print(f"Copied {wifi_count} wifi network profile(s) - should auto-connect on first boot.")
     args.ssh_keys.unlink(missing_ok=True)
 
     if args.keep_creds:

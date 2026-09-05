@@ -88,6 +88,17 @@ without a full install; it needs `libfido2` and a security-key-capable `ssh-keyg
 (check with `ssh -Q key | grep sk`) — install with `pacman -Sy libfido2` on the live ISO
 if missing.
 
+### Wifi (carried over automatically)
+
+`network_config.type` is `"nm_iwd"` — NetworkManager (so the desktop gets a proper
+network applet via `network-manager-applet`) using `iwd` as its wifi backend. If you
+connected to wifi on the live ISO with `iwctl` before running this, `install.py` copies
+that connection's saved profile from `/var/lib/iwd/` to the target after `archinstall`
+finishes, so it's already connected on first boot — no need to reconnect manually.
+(archinstall has a built-in `"iso"` network type that does this same copy automatically,
+but it skips NetworkManager entirely; since we want the GUI applet, this is done as a
+small manual step instead, in the same mount pass as the SSH provisioning above.)
+
 ### Running archinstall directly
 
 ```sh
