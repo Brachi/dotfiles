@@ -33,36 +33,21 @@ ROOT_START_MIB = ESP_START_MIB + ESP_SIZE_MIB
 END_RESERVE_MIB = 2  # headroom for the GPT backup header at the end of the disk
 
 
-def live_boot_disks() -> set[str]:
-    """Disks that must never be offered as install targets, so the live boot
-    medium can't be wiped out from under itself.
+def list_disks() -> list[dict]:
+    """Candidate target disks, excluding the live boot medium by transport
+    (TRAN == "usb") so it can't be wiped out from under itself.
 
-    Originally this looked only at what's mounted on /run/archiso/bootmnt, but
-    on real hardware that path can resolve through a loop/overlay mount rather
-    than the raw partition, silently failing to exclude anything. The
-    follow-up fix (exclude any disk with a mounted partition) also failed on
-    real hardware: this archiso apparently mounts the boot stick only long
-    enough to loop-mount its squashfs (visible as an unrelated top-level loop0
-    device, not nested under the USB disk in lsblk's tree), then leaves the
-    stick itself fully unmounted - confirmed via `lsblk -o NAME,PATH,TYPE,
-    TRAN,MOUNTPOINT` showing the boot USB's partitions with empty mountpoints.
-    So: exclude by transport (TRAN == "usb") instead, which doesn't depend on
-    mount state at all - kept as the primary signal, with the mounted-
-    partition check retained as an extra safety net for any other case.
+    Two earlier approaches both failed on real hardware: matching what's
+    mounted on /run/archiso/bootmnt (that path can resolve through a
+    loop/overlay mount rather than the raw partition, so it silently excluded
+    nothing), and excluding any disk with a mounted partition at all (this
+    archiso mounts the boot stick only long enough to loop-mount its squashfs,
+    then leaves the stick itself unmounted - so that check also excluded
+    nothing there, and worse, wrongly excluded the *target* disk too whenever
+    an interrupted previous install attempt left it with a stale mount).
+    Transport doesn't depend on mount state at all, so it doesn't have either
+    problem.
     """
-    out = subprocess.run(
-        ["lsblk", "-n", "-o", "PKNAME,MOUNTPOINT"],
-        capture_output=True, text=True,
-    ).stdout
-    excluded = set()
-    for line in out.splitlines():
-        pkname, _, mountpoint = line.strip().partition(" ")
-        if pkname and mountpoint.strip():
-            excluded.add(f"/dev/{pkname}")
-    return excluded
-
-
-def list_disks(exclude: set[str]) -> list[dict]:
     out = subprocess.run(
         ["lsblk", "-J", "-b", "-o", "NAME,PATH,SIZE,TYPE,RO,TRAN"],
         check=True, capture_output=True, text=True,
@@ -75,7 +60,7 @@ def list_disks(exclude: set[str]) -> list[dict]:
         # backed by real hardware (they have a /sys/block/<name>/device link).
         if not Path("/sys/block", dev["name"], "device").exists():
             continue
-        if dev.get("tran") == "usb" or dev["path"] in exclude:
+        if dev.get("tran") == "usb":
             continue
         disks.append({"path": dev["path"], "size": int(dev["size"])})
     return disks
@@ -130,7 +115,7 @@ def main() -> None:
     if args.device:
         target = {"path": args.device, "size": disk_size(args.device)}
     else:
-        target = pick_disk(list_disks(exclude=live_boot_disks()))
+        target = pick_disk(list_disks())
 
     root_size_mib = (target["size"] // (1024 * 1024)) - ROOT_START_MIB - END_RESERVE_MIB
     if root_size_mib <= 0:
