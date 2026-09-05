@@ -39,11 +39,16 @@ def live_boot_disks() -> set[str]:
 
     Originally this looked only at what's mounted on /run/archiso/bootmnt, but
     on real hardware that path can resolve through a loop/overlay mount rather
-    than the raw partition, silently failing to exclude anything - the live
-    USB then showed up as a selectable target. Instead, exclude every disk
-    that currently has ANY mounted partition: the boot medium always has
-    something mounted (that's how you're running this script at all), while a
-    genuine target disk on a fresh live boot has nothing mounted on it yet.
+    than the raw partition, silently failing to exclude anything. The
+    follow-up fix (exclude any disk with a mounted partition) also failed on
+    real hardware: this archiso apparently mounts the boot stick only long
+    enough to loop-mount its squashfs (visible as an unrelated top-level loop0
+    device, not nested under the USB disk in lsblk's tree), then leaves the
+    stick itself fully unmounted - confirmed via `lsblk -o NAME,PATH,TYPE,
+    TRAN,MOUNTPOINT` showing the boot USB's partitions with empty mountpoints.
+    So: exclude by transport (TRAN == "usb") instead, which doesn't depend on
+    mount state at all - kept as the primary signal, with the mounted-
+    partition check retained as an extra safety net for any other case.
     """
     out = subprocess.run(
         ["lsblk", "-n", "-o", "PKNAME,MOUNTPOINT"],
@@ -59,7 +64,7 @@ def live_boot_disks() -> set[str]:
 
 def list_disks(exclude: set[str]) -> list[dict]:
     out = subprocess.run(
-        ["lsblk", "-J", "-b", "-o", "NAME,PATH,SIZE,TYPE,RO"],
+        ["lsblk", "-J", "-b", "-o", "NAME,PATH,SIZE,TYPE,RO,TRAN"],
         check=True, capture_output=True, text=True,
     ).stdout
     disks = []
@@ -70,7 +75,7 @@ def list_disks(exclude: set[str]) -> list[dict]:
         # backed by real hardware (they have a /sys/block/<name>/device link).
         if not Path("/sys/block", dev["name"], "device").exists():
             continue
-        if dev["path"] in exclude:
+        if dev.get("tran") == "usb" or dev["path"] in exclude:
             continue
         disks.append({"path": dev["path"], "size": int(dev["size"])})
     return disks
