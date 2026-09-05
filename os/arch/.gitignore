@@ -1,2 +1,4 @@
 user_configuration.generated.json
 user_credentials.json
+ssh_authorized_keys.generated
+__pycache__/

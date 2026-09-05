@@ -72,6 +72,22 @@ writes `user_credentials.json` — password-hashed, gitignored, never committed.
 deliberately left locked (no `root_enc_password`); administer via the sudo user instead.
 Pass `--username` to skip the username prompt.
 
+### SSH access (optional)
+
+`install.py` also runs `provision_ssh.py`, which offers to generate resident FIDO2 SSH
+keys directly on hardware security keys (YubiKeys etc.) via `ssh-keygen -O resident` —
+the private key never leaves the device. Decline the prompt for a plain install with no
+SSH keys configured (sshd is left at its default config in that case).
+
+If you add at least one key, after `archinstall` finishes `install.py` mounts the new
+root filesystem itself (independent of whatever state `archinstall` left it in),
+authorizes the collected keys for the sudo user, drops
+`/etc/ssh/sshd_config.d/10-harden.conf` (`PasswordAuthentication no`), and enables
+`sshd.service`. Run `python provision_ssh.py` standalone to test the hardware step
+without a full install; it needs `libfido2` and a security-key-capable `ssh-keygen`
+(check with `ssh -Q key | grep sk`) — install with `pacman -Sy libfido2` on the live ISO
+if missing.
+
 ### Running archinstall directly
 
 ```sh
