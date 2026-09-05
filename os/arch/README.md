@@ -5,15 +5,16 @@ fully machine-agnostic: archinstall's config format has no device auto-detection
 relative/remainder partition sizing (confirmed against `archinstall/lib/args.py` and
 `archinstall/lib/models/device.py` on `master`), so two values (device path, root
 partition size) need to be filled in per machine. `template_config.py` does that
-automatically — see below. Everything else (packages, locale, encryption, bootloader,
-desktop) is shared and does not need editing.
+automatically — see below. Locale, encryption, and bootloader settings are shared and
+don't need editing; packages depend on which `--profile` you pick (see
+[Packages and profiles](#packages-and-profiles)).
 
 ## Installing on a new machine
 
 Boot the target machine from the Arch ISO, `cd` into this directory, and run:
 
 ```sh
-python install.py --hostname lab-03
+python install.py --hostname lab-03 --profile workstation
 ```
 
 This chains the three steps below (disk templating, credential generation,
@@ -51,6 +52,30 @@ wiped. Double check the printed device path before running archinstall.
 To edit by hand instead, replace the two `CHANGEME` values in `user_configuration.json`:
 `disk_config.device_modifications[0].device`, and partition `[1]`'s `size.value`
 (`(disk size in GiB) - 2`, leaving ~1 GiB for the ESP and a small alignment gap).
+
+### Packages and profiles
+
+`packages.toml` is the single source of truth for packages, tagged by purpose
+(`base`, `dev`, `desktop`, `media`, `extra`, `server`). `[profiles]` names which tags to
+combine — currently `workstation` (everything, full KDE desktop) and `homelab-server`
+(`base` + `dev` + `server`, no desktop/GUI packages at all). `template_config.py` always
+overwrites `user_configuration.json`'s `packages` array with the resolved list, so that
+field in the template itself is just a placeholder — edit `packages.toml` instead.
+
+```sh
+python resolve_packages.py --profile homelab-server   # preview the flat list
+python install.py --hostname lab-04 --profile homelab-server
+```
+
+Add a package once, under whichever tag(s) fit, rather than editing a profile's list
+directly. `--tags base,dev` also works in place of `--profile` for an ad hoc combination.
+
+If the resolved profile includes the `dev` tag, `install.py` also installs Claude Code
+globally (`npm install -g @anthropic-ai/claude-code`) inside the target as part of the
+same post-install chroot pass used for SSH/wifi — a `resolv.conf` copy from the live
+environment is needed first since nothing's running yet inside a bare chroot to manage
+DNS. A failure here only warns (with the manual command to run later) rather than
+failing the whole install, since it's a nice-to-have, not install-critical.
 
 ### Credentials
 
@@ -107,7 +132,5 @@ archinstall --config user_configuration.generated.json --creds user_credentials.
 
 ## Notes
 
-- `packages.txt` is a separate, independently-maintained list — not consumed by
-  `user_configuration.json` or archinstall directly.
-- `vulkan-intel` in `packages` assumes an Intel iGPU; swap for `vulkan-radeon` (AMD) or
-  the Nvidia driver package if installing on different hardware.
+- `vulkan-intel` in `packages.toml`'s `desktop` tag assumes an Intel iGPU; swap for
+  `vulkan-radeon` (AMD) or the Nvidia driver package if installing on different hardware.

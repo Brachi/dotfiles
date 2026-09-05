@@ -1,0 +1,62 @@
+# Single source of truth for packages, tagged by purpose. Replaces the old
+# packages.txt + user_configuration.json's hardcoded "packages" array, which
+# were two separate, drifting lists.
+#
+# resolve_packages.py turns a --profile (or explicit --tags) into the flat,
+# deduplicated list archinstall's JSON config needs. Add a package once,
+# under whichever tag(s) it belongs to; profiles below just name which tags
+# to combine.
+
+[tags.base]
+# CLI essentials wanted on every machine, GUI or not.
+packages = [
+    "base-devel", "ccid", "chafa", "direnv", "efibootmgr", "exfat-utils",
+    "firejail", "git", "git-lfs", "gnupg", "htop", "intel-ucode",
+    "libfido2", "linux", "linux-firmware", "man-db", "man-pages",
+    "networkmanager", "nmap", "openssh", "p7zip", "pacman-contrib",
+    "pass", "pcsclite", "ranger", "ripgrep", "rsync", "sof-firmware",
+    "tmux", "tree-sitter-cli", "unrar", "unzip", "watchexec", "yazi",
+    "yubikey-manager", "zip", "zram-generator",
+]
+
+[tags.dev]
+# Matches this laptop's CLI dev stack.
+packages = [
+    "cmake", "docker", "emscripten", "github-cli", "kaitai-struct-compiler",
+    "neovim", "nodejs", "npm", "patchelf", "python", "radare2", "rustup",
+    "sbt", "wabt", "wasmer", "wasmtime",
+]
+
+[tags.desktop]
+# KDE Plasma + the GUI-only bits that go with it.
+packages = [
+    "adobe-source-sans-fonts", "alacritty", "chromium", "cups", "cups-pdf",
+    "firefox", "gedit", "gst-plugin-pipewire", "konsole", "libinput-tools",
+    "libpulse", "network-manager-applet", "pipewire", "pipewire-alsa",
+    "pipewire-jack", "pipewire-pulse", "plasma-meta", "qt5-remoteobjects",
+    "qt5-wayland", "qt5-webengine", "sddm", "skanpage", "spectacle",
+    "system-config-printer", "ttf-hack-nerd", "ttf-roboto", "vulkan-intel",
+    "wireplumber", "wl-clipboard",
+]
+
+[tags.server]
+packages = ["caddy"]
+
+[tags.media]
+packages = [
+    "ardour", "audacity", "beets", "blender", "elisa", "gimp", "godot",
+    "inkscape", "koko", "krita", "lmms", "mpv", "yt-dlp",
+]
+
+[tags.extra]
+# Everything else from the old lists that doesn't fit a clean category yet -
+# fine to re-tag more precisely later.
+packages = [
+    "gnucash", "libreoffice-fresh", "steam", "texlive-fontsextra",
+    "texlive-fontsrecommended", "texlive-latexextra", "texlive-luatex",
+    "texlive-xetex", "virtualbox",
+]
+
+[profiles]
+workstation = ["base", "dev", "desktop", "media", "extra"]
+homelab-server = ["base", "dev", "server"]

@@ -107,9 +107,17 @@ def main() -> None:
     parser.add_argument("--output", default=Path(__file__).with_name("user_configuration.generated.json"), type=Path)
     parser.add_argument("--hostname", default=None)
     parser.add_argument("--device", default=None, help="Skip disk detection, use this device path directly")
+    parser.add_argument("--profile", default="workstation",
+                         help="Profile from packages.toml to resolve the packages list from")
     args = parser.parse_args()
 
     config = json.loads(args.template.read_text())
+
+    resolved = subprocess.run(
+        [sys.executable, str(Path(__file__).with_name("resolve_packages.py")), "--profile", args.profile],
+        check=True, capture_output=True, text=True,
+    ).stdout
+    config["packages"] = resolved.splitlines()
 
     if args.device:
         target = {"path": args.device, "size": disk_size(args.device)}

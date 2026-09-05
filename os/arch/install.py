@@ -21,6 +21,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import tomllib
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -172,6 +173,26 @@ def copy_wifi_config(mnt: Path) -> int:
     return len(psks)
 
 
+def profile_has_tag(profile: str, tag: str) -> bool:
+    data = tomllib.loads(Path(HERE, "packages.toml").read_text())
+    return tag in data.get("profiles", {}).get(profile, [])
+
+
+def install_claude_code(mnt: Path) -> None:
+    """Install Claude Code globally via npm inside the target. Needs a
+    working /etc/resolv.conf inside the chroot - a bare post-install chroot
+    has nothing running to manage it, unlike a real boot."""
+    live_resolv_conf = Path("/etc/resolv.conf")
+    if live_resolv_conf.exists():
+        shutil.copy(live_resolv_conf, Path(mnt, "etc/resolv.conf"))
+    result = subprocess.run(["arch-chroot", str(mnt), "npm", "install", "-g", "@anthropic-ai/claude-code"])
+    if result.returncode != 0:
+        print("Warning: failed to install Claude Code - install manually later with:")
+        print("  npm install -g @anthropic-ai/claude-code")
+    else:
+        print("Installed Claude Code globally.")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -185,6 +206,8 @@ def main() -> None:
     parser.add_argument("--keep-creds", action="store_true",
                          help="Don't delete user_credentials.json after a successful install")
     parser.add_argument("--ssh-keys", default=HERE / "ssh_authorized_keys.generated", type=Path)
+    parser.add_argument("--profile", default="workstation",
+                         help="Profile from packages.toml to resolve the packages list from")
     args = parser.parse_args()
 
     if shutil.which("archinstall") is None:
@@ -193,7 +216,8 @@ def main() -> None:
         sys.exit("Must run as root (archinstall requires it) - avoids retyping passwords for nothing.")
 
     template_cmd = [sys.executable, str(HERE / "template_config.py"),
-                     "--template", str(args.template), "--output", str(args.config)]
+                     "--template", str(args.template), "--output", str(args.config),
+                     "--profile", args.profile]
     if args.hostname:
         template_cmd += ["--hostname", args.hostname]
     if args.device:
@@ -224,12 +248,15 @@ def main() -> None:
     run(["archinstall", "--config", str(args.config), "--creds", str(args.creds)])
 
     has_wifi = bool(list(Path("/var/lib/iwd").glob("*.psk"))) if Path("/var/lib/iwd").exists() else False
-    if pubkeys or has_wifi:
+    install_claude = profile_has_tag(args.profile, "dev")
+    if pubkeys or has_wifi or install_claude:
         with mounted_target(device, luks_passphrase) as mnt:
             if pubkeys:
                 provision_ssh_access(mnt, username, pubkeys)
             if wifi_count := copy_wifi_config(mnt):
                 print(f"Copied {wifi_count} wifi network profile(s) - should auto-connect on first boot.")
+            if install_claude:
+                install_claude_code(mnt)
     args.ssh_keys.unlink(missing_ok=True)
 
     if args.keep_creds:
