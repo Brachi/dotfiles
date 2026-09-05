@@ -161,10 +161,25 @@ def copy_wifi_config(mnt: Path) -> int:
     a proper GUI applet on the desktop, with iwd as its backend), which
     doesn't carry these over on its own. iwd reads its known-networks from
     this same path regardless of whether it's run standalone or driven by
-    NetworkManager, so a plain file copy is enough."""
+    NetworkManager, so a plain file copy is enough.
+
+    Only *.psk files are copied (WPA2/WPA3-Personal). iwd also stores open
+    networks as *.open and enterprise/802.1x networks as *.8021x - if the
+    live session's network was one of those, this intentionally won't carry
+    it over, but says so explicitly rather than silently copying nothing."""
     live_iwd = Path("/var/lib/iwd")
-    psks = list(live_iwd.glob("*.psk")) if live_iwd.exists() else []
+    if not live_iwd.exists():
+        print("No /var/lib/iwd on the live environment - nothing to carry over.")
+        return 0
+    all_profiles = [p for p in live_iwd.iterdir() if p.is_file()]
+    psks = [p for p in all_profiles if p.suffix == ".psk"]
     if not psks:
+        if all_profiles:
+            print(f"Found network profile(s) on the live environment but none are *.psk "
+                  f"(WPA-Personal): {[p.name for p in all_profiles]} - not carried over.")
+        else:
+            print("No saved network profiles found on the live environment (was iwctl "
+                  "actually used to connect, in this same boot session?) - nothing to carry over.")
         return 0
     target_iwd = Path(mnt, "var/lib/iwd")
     target_iwd.mkdir(parents=True, exist_ok=True)
