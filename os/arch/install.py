@@ -31,6 +31,40 @@ def run(cmd: list[str]) -> None:
         sys.exit(f"Command failed ({result.returncode}): {' '.join(cmd)}")
 
 
+def release_device(device: str) -> None:
+    """Release anything holding the target device busy - a mounted filesystem,
+    active swap, or an open LUKS mapping from a previous install left on the
+    disk - so archinstall's own wipefs doesn't fail with 'Device or resource
+    busy'. Hit in practice on a machine that already had an encrypted install
+    on it from an earlier attempt."""
+    out = subprocess.run(
+        ["lsblk", "-J", "-o", "NAME,PATH,FSTYPE,MOUNTPOINT", device],
+        capture_output=True, text=True,
+    )
+    if out.returncode != 0:
+        return
+
+    def release(node: dict) -> None:
+        children = node.get("children", [])
+        for child in children:
+            release(child)
+        path = node.get("path")
+        if node.get("mountpoint"):
+            subprocess.run(["umount", path])
+            print(f"  unmounted {path}")
+        elif node.get("fstype") == "swap":
+            subprocess.run(["swapoff", path])
+            print(f"  swapoff {path}")
+        if node.get("fstype") == "crypto_LUKS":
+            for child in children:
+                name = Path(child["path"]).name
+                subprocess.run(["cryptsetup", "close", name])
+                print(f"  closed LUKS mapping {name}")
+
+    for node in json.loads(out.stdout).get("blockdevices", []):
+        release(node)
+
+
 def confirm_wipe(device: str, hostname: str, username: str) -> None:
     print()
     print("About to install with:")
@@ -82,6 +116,9 @@ def main() -> None:
     username = json.loads(args.creds.read_text())["users"][0]["username"]
 
     confirm_wipe(device, hostname, username)
+
+    print(f"Releasing anything holding {device} busy (old mounts/swap/LUKS mappings)...")
+    release_device(device)
 
     run(["archinstall", "--config", str(args.config), "--creds", str(args.creds)])
 
