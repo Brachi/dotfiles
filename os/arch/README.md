@@ -127,8 +127,7 @@ proceed otherwise; a `cryptsetup open` failure is likewise fatal rather than sil
 falling back to a raw mount. Run `python provision_ssh.py` standalone to test the
 hardware step without a full install; it needs `libfido2` and a security-key-capable
 `ssh-keygen` (check with `ssh -Q key | grep sk`) — install with `pacman -Sy libfido2`
-on the live ISO
-if missing.
+on the live ISO if missing.
 
 ### Wifi (carried over automatically)
 
@@ -145,12 +144,12 @@ small manual step instead, in the same mount pass as the SSH provisioning above.
 
 `locale_config.console_font` is `"ter-132n"` (large Terminus), not archinstall's default
 `default8x16` — at a high output resolution (e.g. a 4K-capable GPU driving a plain text
-console), the default font is tiny to the point of being unreadable, noticed while
-watching a mini PC's console over an HDMI capture card. archinstall auto-installs
-`terminus-font` itself whenever the font name starts with `ter-`, so no package list
-changes were needed. This only affects the *installed* system's console (`/etc/vconsole.conf`)
-— the live ISO's own shell still uses its own default font; bump that separately and
-temporarily with `pacman -Sy terminus-font && setfont ter-132n` if needed.
+console), the default font is tiny to the point of being unreadable. archinstall
+auto-installs `terminus-font` itself whenever the font name starts with `ter-`, so no
+package list changes were needed. This only affects the *installed* system's console
+(`/etc/vconsole.conf`) — the live ISO's own shell still uses its own default font; bump
+that separately and temporarily with `pacman -Sy terminus-font && setfont ter-132n` if
+needed.
 
 ### Running archinstall directly
 
