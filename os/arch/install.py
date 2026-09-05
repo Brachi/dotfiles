@@ -103,10 +103,21 @@ def nth_partition(device: str, n: int) -> str:
 
 
 @contextmanager
-def mounted_target(device: str, luks_passphrase: str):
+def mounted_target(device: str, luks_passphrase: str, expected_hostname: str):
     """Open/mount the just-installed root partition for post-install
     touch-ups, independent of whatever mount state archinstall left behind
-    at exit (undocumented, so not something to rely on)."""
+    at exit (undocumented, so not something to rely on).
+
+    `nth_partition` trusts raw GPT slot position 2 as "the fresh root" with
+    no validation - on a disk that's had a previous install (this exact
+    machine has, hence the busy-device handling elsewhere), that slot could
+    resolve to a stale root left over from earlier testing instead of
+    tonight's. Two guards against that: cryptsetup failing is now fatal
+    (no silent fallback to mounting the raw, undecrypted partition), and the
+    mounted filesystem's /etc/hostname must match what was just installed -
+    otherwise every post-install step downstream (SSH auth, sshd enable,
+    Claude Code install) would silently succeed against the wrong,
+    previously-installed filesystem with no error anywhere."""
     root_partition = nth_partition(device, 2)
     mapper_name = "arch_post_install"
     mnt = Path(tempfile.mkdtemp(prefix="arch-post-install-"))
@@ -115,8 +126,17 @@ def mounted_target(device: str, luks_passphrase: str):
             ["cryptsetup", "open", root_partition, mapper_name, "--key-file", "-"],
             input=luks_passphrase, text=True,
         )
-        root_device = f"/dev/mapper/{mapper_name}" if opened.returncode == 0 else root_partition
-        run(["mount", root_device, str(mnt)])
+        if opened.returncode != 0:
+            sys.exit(f"cryptsetup open failed on {root_partition} - refusing to fall back to a raw mount.")
+        run(["mount", f"/dev/mapper/{mapper_name}", str(mnt)])
+
+        actual_hostname = Path(mnt, "etc/hostname").read_text().strip()
+        if actual_hostname != expected_hostname:
+            sys.exit(f"Mounted {root_partition} but its /etc/hostname is {actual_hostname!r}, "
+                     f"not the {expected_hostname!r} just installed - refusing to touch it. "
+                     f"This likely means partition 2 on {device} is a stale install from earlier "
+                     f"testing, not tonight's fresh one.")
+
         yield mnt
     finally:
         subprocess.run(["umount", str(mnt)])
@@ -267,7 +287,7 @@ def main() -> None:
     has_wifi = bool(list(Path("/var/lib/iwd").glob("*.psk"))) if Path("/var/lib/iwd").exists() else False
     install_claude = profile_has_tag(args.profile, "dev")
     if pubkeys or has_wifi or install_claude:
-        with mounted_target(device, luks_passphrase) as mnt:
+        with mounted_target(device, luks_passphrase, hostname) as mnt:
             if pubkeys:
                 provision_ssh_access(mnt, username, pubkeys)
             if wifi_count := copy_wifi_config(mnt):

@@ -119,9 +119,15 @@ If you add at least one key, after `archinstall` finishes `install.py` mounts th
 root filesystem itself (independent of whatever state `archinstall` left it in),
 authorizes the collected keys for the sudo user, drops
 `/etc/ssh/sshd_config.d/10-harden.conf` (`PasswordAuthentication no`), and enables
-`sshd.service`. Run `python provision_ssh.py` standalone to test the hardware step
-without a full install; it needs `libfido2` and a security-key-capable `ssh-keygen`
-(check with `ssh -Q key | grep sk`) — install with `pacman -Sy libfido2` on the live ISO
+`sshd.service`. It resolves the root partition by raw GPT slot position (partition 2),
+which has no way to distinguish a fresh install from a stale one left on the same disk
+by an earlier attempt - so before touching anything, it verifies the mounted
+filesystem's `/etc/hostname` matches what was just installed, and refuses (loudly) to
+proceed otherwise; a `cryptsetup open` failure is likewise fatal rather than silently
+falling back to a raw mount. Run `python provision_ssh.py` standalone to test the
+hardware step without a full install; it needs `libfido2` and a security-key-capable
+`ssh-keygen` (check with `ssh -Q key | grep sk`) — install with `pacman -Sy libfido2`
+on the live ISO
 if missing.
 
 ### Wifi (carried over automatically)
