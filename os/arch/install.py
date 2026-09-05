@@ -9,7 +9,7 @@ passwords just to hit a permission error afterwards).
 Usage:
     python install.py
     python install.py --hostname lab-03
-    python install.py --device /dev/sda --hostname lab-03 --username seba
+    python install.py --device /dev/sda --hostname lab-03 --username admin
 """
 
 from __future__ import annotations
