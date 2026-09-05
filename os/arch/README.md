@@ -77,14 +77,11 @@ environment is needed first since nothing's running yet inside a bare chroot to 
 DNS. A failure here only warns (with the manual command to run later) rather than
 failing the whole install, since it's a nice-to-have, not install-critical.
 
-`packages.toml` was partly seeded from `pacman -Qe` on an existing machine, which
-doesn't distinguish official-repo packages from ones built locally/via an AUR helper -
-this let an AUR-only package (`kaitai-struct-compiler`) slip in, which only surfaced as
-a `pacstrap` failure *after* the disk was already wiped. `check_packages.py` guards
-against this now: `install.py` runs it right after generating the config (before
-credentials or the wipe confirmation), checking every resolved package against `pacman
--Si` and aborting early if any don't resolve. Run it standalone anytime with
-`python check_packages.py --toml packages.toml` to audit the whole file, or
+`check_packages.py` checks every resolved package against `pacman -Si`, so a typo,
+renamed package, or an AUR-only package that pacman can't install gets caught before
+the wipe confirmation, not partway through `pacstrap` after the disk is already gone.
+`install.py` runs it automatically right after generating the config. Run it standalone
+anytime with `python check_packages.py --toml packages.toml` to audit the whole file, or
 `--config user_configuration.generated.json` to check one generated profile.
 
 ### Credentials
