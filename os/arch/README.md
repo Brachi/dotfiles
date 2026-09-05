@@ -102,7 +102,11 @@ Pass `--username` to skip the username prompt.
 `install.py` also runs `provision_ssh.py`, which offers to generate resident FIDO2 SSH
 keys directly on hardware security keys (YubiKeys etc.) via `ssh-keygen -O resident` —
 the private key never leaves the device. Decline the prompt for a plain install with no
-SSH keys configured (sshd is left at its default config in that case).
+SSH keys configured (sshd is left at its default config in that case). Each key gets a
+distinct `-O user=<comment>` so re-running against the same physical key (e.g. across
+install attempts) doesn't prompt to overwrite an unrelated previous credential —
+`ssh-keygen`'s FIDO2 resident keys are identified by relying-party + username, and the
+username defaults to empty/shared otherwise.
 
 If you add at least one key, after `archinstall` finishes `install.py` mounts the new
 root filesystem itself (independent of whatever state `archinstall` left it in),

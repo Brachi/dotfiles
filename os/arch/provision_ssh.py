@@ -41,7 +41,7 @@ def generate_one(comment: str) -> str:
         keyfile = Path(tmp) / "key"
         result = subprocess.run([
             "ssh-keygen", "-t", "ed25519-sk", "-O", "resident", "-O", "verify-required",
-            "-N", "", "-C", comment, "-f", str(keyfile),
+            "-O", f"user={comment}", "-N", "", "-C", comment, "-f", str(keyfile),
         ])
         if result.returncode != 0:
             sys.exit(
