@@ -114,6 +114,9 @@ def main() -> None:
     parser.add_argument("--device", default=None, help="Skip disk detection, use this device path directly")
     parser.add_argument("--profile", default="workstation",
                          help="Profile from packages.toml to resolve the packages list from")
+    parser.add_argument("--chained", action="store_true",
+                         help="Suppress the standalone 'run archinstall yourself next' hint - "
+                              "pass this when called from install.py, which runs archinstall itself")
     args = parser.parse_args()
 
     config = json.loads(args.template.read_text())
@@ -151,7 +154,8 @@ def main() -> None:
     print(f"Wrote {args.output}")
     print(f"  device: {target['path']}")
     print(f"  root partition: {root_size_mib} MiB ({root_size_mib / 1024:.1f} GiB)")
-    print(f"Review it, then run: archinstall --config {args.output}")
+    if not args.chained:
+        print(f"Review it, then run: archinstall --config {args.output}")
 
 
 if __name__ == "__main__":

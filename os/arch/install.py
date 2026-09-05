@@ -217,7 +217,7 @@ def main() -> None:
 
     template_cmd = [sys.executable, str(HERE / "template_config.py"),
                      "--template", str(args.template), "--output", str(args.config),
-                     "--profile", args.profile]
+                     "--profile", args.profile, "--chained"]
     if args.hostname:
         template_cmd += ["--hostname", args.hostname]
     if args.device:
