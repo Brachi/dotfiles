@@ -25,3 +25,7 @@ kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key ButtonsOnLeft ""
 
 # KDE: Meta+Shift+Return opens a new Alacritty window
 kwriteconfig6 --file kglobalshortcutsrc --group services --group Alacritty.desktop --key New "Meta+Shift+Return"
+
+# KDE: no clipboard history (keep only the current item, never save it to disk)
+kwriteconfig6 --file klipperrc --group General --key KeepClipboardContents false
+kwriteconfig6 --file klipperrc --group General --key MaxClipItems 1
