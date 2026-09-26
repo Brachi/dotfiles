@@ -36,9 +36,6 @@ packages = [
     "wireplumber", "wl-clipboard",
 ]
 
-[tags.server]
-packages = ["caddy"]
-
 [tags.media]
 packages = [
     "audacity", "blender", "elisa", "gimp", "godot", "inkscape", "kew",
@@ -54,4 +51,4 @@ packages = [
 
 [profiles]
 workstation = ["base", "dev", "desktop", "media", "extra"]
-homelab-server = ["base", "dev", "server"]
+homelab-server = ["base", "dev"]

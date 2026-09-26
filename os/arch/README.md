@@ -56,9 +56,9 @@ To edit by hand instead, replace the two `CHANGEME` values in `user_configuratio
 ### Packages and profiles
 
 `packages.toml` is the single source of truth for packages, tagged by purpose
-(`base`, `dev`, `desktop`, `media`, `extra`, `server`). `[profiles]` names which tags to
+(`base`, `dev`, `desktop`, `media`, `extra`). `[profiles]` names which tags to
 combine — currently `workstation` (everything, full KDE desktop) and `homelab-server`
-(`base` + `dev` + `server`, no desktop/GUI packages at all). `template_config.py` always
+(`base` + `dev`, no desktop/GUI packages at all). `template_config.py` always
 overwrites `user_configuration.json`'s `packages` array with the resolved list, so that
 field in the template itself is just a placeholder — edit `packages.toml` instead.
 
