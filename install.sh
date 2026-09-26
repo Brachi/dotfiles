@@ -11,6 +11,9 @@ ln -fs "$SRC_XDG_CONFIG/git" $DST_XDG_CONFIG
 ln -fs "$SRC_XDG_CONFIG/nvim" $DST_XDG_CONFIG
 ln -fs "$SRC_XDG_CONFIG/ranger" $DST_XDG_CONFIG
 ln -fs "$SRC_XDG_CONFIG/tmux" $DST_XDG_CONFIG
+ln -fs "$SRC_XDG_CONFIG/kded5rc" $DST_XDG_CONFIG
+ln -fs "$SRC_XDG_CONFIG/plasma-localerc" $DST_XDG_CONFIG
+ln -fs "$SRC_XDG_CONFIG/plasmaparc" $DST_XDG_CONFIG
 
 
 ln -fs "$SRC_XDG_CONFIG/bash/bash_aliases" $HOME/.bash_aliases
