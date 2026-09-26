@@ -70,14 +70,8 @@ python install.py --hostname lab-04 --profile homelab-server
 Add a package once, under whichever tag(s) fit, rather than editing a profile's list
 directly. `--tags base,dev` also works in place of `--profile` for an ad hoc combination.
 
-If the resolved profile includes the `dev` tag, `install.py` also installs Claude Code
-globally (`npm install -g @anthropic-ai/claude-code`) inside the target as part of the
-same post-install chroot pass used for SSH/wifi — a `resolv.conf` copy from the live
-environment is needed first since nothing's running yet inside a bare chroot to manage
-DNS. A failure here only warns (with the manual command to run later) rather than
-failing the whole install, since it's a nice-to-have, not install-critical.
-
-If it includes the `desktop` tag, the same pass sets the SDDM login theme to Breeze via
+If the resolved profile includes the `desktop` tag, `install.py` also sets the SDDM login
+theme to Breeze, as part of the same post-install pass used for SSH/wifi, via
 `/etc/sddm.conf.d/10-theme.conf`. Breeze ships with Plasma and runs on SDDM's Qt6
 greeter; the themes bundled with `sddm` itself (elarun, maldives, maya) are Qt5 and
 won't draw without `qt5-declarative`, which leaves you unable to log in. A theme picked

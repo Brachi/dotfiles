@@ -116,7 +116,7 @@ def mounted_target(device: str, luks_passphrase: str, expected_hostname: str):
     (no silent fallback to mounting the raw, undecrypted partition), and the
     mounted filesystem's /etc/hostname must match what was just installed -
     otherwise every post-install step downstream (SSH auth, sshd enable,
-    Claude Code install) would silently succeed against the wrong,
+    SDDM theme, CUPS) would silently succeed against the wrong,
     previously-installed filesystem with no error anywhere."""
     root_partition = nth_partition(device, 2)
     mapper_name = "arch_post_install"
@@ -233,21 +233,6 @@ def profile_has_tag(profile: str, tag: str) -> bool:
     return tag in data.get("profiles", {}).get(profile, [])
 
 
-def install_claude_code(mnt: Path) -> None:
-    """Install Claude Code globally via npm inside the target. Needs a
-    working /etc/resolv.conf inside the chroot - a bare post-install chroot
-    has nothing running to manage it, unlike a real boot."""
-    live_resolv_conf = Path("/etc/resolv.conf")
-    if live_resolv_conf.exists():
-        shutil.copy(live_resolv_conf, Path(mnt, "etc/resolv.conf"))
-    result = subprocess.run(["arch-chroot", str(mnt), "npm", "install", "-g", "@anthropic-ai/claude-code"])
-    if result.returncode != 0:
-        print("Warning: failed to install Claude Code - install manually later with:")
-        print("  npm install -g @anthropic-ai/claude-code")
-    else:
-        print("Installed Claude Code globally.")
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -305,17 +290,14 @@ def main() -> None:
     run(["archinstall", "--config", str(args.config), "--creds", str(args.creds)])
 
     has_wifi = bool(list(Path("/var/lib/iwd").glob("*.psk"))) if Path("/var/lib/iwd").exists() else False
-    install_claude = profile_has_tag(args.profile, "dev")
     has_desktop = profile_has_tag(args.profile, "desktop")
     has_printing = profile_has_tag(args.profile, "printing")
-    if pubkeys or has_wifi or install_claude or has_desktop or has_printing:
+    if pubkeys or has_wifi or has_desktop or has_printing:
         with mounted_target(device, luks_passphrase, hostname) as mnt:
             if pubkeys:
                 provision_ssh_access(mnt, username, pubkeys)
             if wifi_count := copy_wifi_config(mnt):
                 print(f"Copied {wifi_count} wifi network profile(s) - should auto-connect on first boot.")
-            if install_claude:
-                install_claude_code(mnt)
             if has_desktop:
                 set_sddm_theme(mnt)
             if has_printing:
