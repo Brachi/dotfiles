@@ -22,3 +22,6 @@ ln -fs "$SRC_XDG_CONFIG/bash/bash_profile" $HOME/.bash_profile
 
 # KDE: no buttons left of the window title (drops the app icon/menu and "on all desktops")
 kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key ButtonsOnLeft ""
+
+# KDE: Meta+Shift+Return opens a new Alacritty window
+kwriteconfig6 --file kglobalshortcutsrc --group services --group Alacritty.desktop --key New "Meta+Shift+Return"
