@@ -23,7 +23,7 @@ packages = [
 # Matches this laptop's CLI dev stack.
 packages = [
     "cloc", "cmake", "docker", "emscripten", "github-cli", "jdk-openjdk",
-    "neovim", "nodejs", "npm", "python", "rustup", "sbt",
+    "neovim", "nodejs", "npm", "python", "rustup", "sbt", "uv",
 ]
 
 [tags.desktop]
