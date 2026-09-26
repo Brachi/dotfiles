@@ -45,7 +45,7 @@ packages = ["caddy"]
 [tags.media]
 packages = [
     "ardour", "audacity", "beets", "blender", "elisa", "gimp", "godot",
-    "inkscape", "koko", "krita", "lmms", "mpv", "yt-dlp",
+    "inkscape", "kew", "koko", "krita", "lmms", "mpv", "yt-dlp",
 ]
 
 [tags.extra]
