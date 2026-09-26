@@ -31,9 +31,9 @@ packages = [
 packages = [
     "alacritty", "chromium", "cups", "cups-pdf", "firefox", "konsole",
     "libinput-tools", "libpulse", "noto-fonts-cjk", "pipewire",
-    "pipewire-alsa", "pipewire-pulse", "plasma-meta", "sddm", "skanpage",
-    "spectacle", "system-config-printer", "ttf-hack-nerd", "vulkan-intel",
-    "wireplumber", "wl-clipboard",
+    "pipewire-alsa", "pipewire-pulse", "plasma-meta", "sddm", "spectacle",
+    "system-config-printer", "ttf-hack-nerd", "vulkan-intel", "wireplumber",
+    "wl-clipboard",
 ]
 
 [tags.server]
