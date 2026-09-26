@@ -10,11 +10,17 @@
 [tags.base]
 # CLI essentials wanted on every machine, GUI or not.
 packages = [
-    "arch-audit", "base-devel", "ccid", "efibootmgr", "git", "gnupg",
-    "intel-ucode", "libfido2", "linux", "linux-firmware", "man-db",
-    "networkmanager", "openssh", "pacman-contrib", "pass", "pcsclite",
-    "ranger", "ripgrep", "rsync", "sof-firmware", "tmux", "tree-sitter-cli",
-    "unzip", "yubikey-manager", "zip", "zram-generator",
+    "arch-audit", "base-devel", "efibootmgr", "git", "intel-ucode", "linux",
+    "linux-firmware", "man-db", "networkmanager", "openssh",
+    "pacman-contrib", "ranger", "ripgrep", "rsync", "sof-firmware", "tmux",
+    "tree-sitter-cli", "unzip", "zip", "zram-generator",
+]
+
+[tags.security]
+# Hardware security keys (FIDO2 SSH keys; ykman's OTP/PIV go through pcscd,
+# which install.py enables for this tag) and the GPG-backed password store.
+packages = [
+    "ccid", "gnupg", "libfido2", "pass", "pcsclite", "yubikey-manager",
 ]
 
 [tags.dev]
@@ -47,5 +53,5 @@ packages = [
 packages = ["gnucash", "libreoffice-fresh"]
 
 [profiles]
-workstation = ["base", "dev", "desktop", "printing", "media", "extra"]
+workstation = ["base", "dev", "desktop", "security", "printing", "media", "extra"]
 homelab-server = ["base", "dev"]

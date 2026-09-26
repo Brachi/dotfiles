@@ -228,6 +228,14 @@ def enable_cups(mnt: Path) -> None:
     print("Enabled CUPS (cups.socket).")
 
 
+def enable_pcscd(mnt: Path) -> None:
+    """Enable the smart card daemon, socket-activated like CUPS. ykman's OTP
+    and PIV commands reach the YubiKey through it; installing pcsclite
+    doesn't enable it."""
+    run(["arch-chroot", str(mnt), "systemctl", "enable", "pcscd.socket"])
+    print("Enabled the smart card daemon (pcscd.socket).")
+
+
 def profile_has_tag(profile: str, tag: str) -> bool:
     data = tomllib.loads(Path(HERE, "packages.toml").read_text())
     return tag in data.get("profiles", {}).get(profile, [])
@@ -292,7 +300,8 @@ def main() -> None:
     has_wifi = bool(list(Path("/var/lib/iwd").glob("*.psk"))) if Path("/var/lib/iwd").exists() else False
     has_desktop = profile_has_tag(args.profile, "desktop")
     has_printing = profile_has_tag(args.profile, "printing")
-    if pubkeys or has_wifi or has_desktop or has_printing:
+    has_security = profile_has_tag(args.profile, "security")
+    if pubkeys or has_wifi or has_desktop or has_printing or has_security:
         with mounted_target(device, luks_passphrase, hostname) as mnt:
             if pubkeys:
                 provision_ssh_access(mnt, username, pubkeys)
@@ -302,6 +311,8 @@ def main() -> None:
                 set_sddm_theme(mnt)
             if has_printing:
                 enable_cups(mnt)
+            if has_security:
+                enable_pcscd(mnt)
     args.ssh_keys.unlink(missing_ok=True)
 
     if args.keep_creds:

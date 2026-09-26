@@ -56,7 +56,7 @@ To edit by hand instead, replace the two `CHANGEME` values in `user_configuratio
 ### Packages and profiles
 
 `packages.toml` is the single source of truth for packages, tagged by purpose
-(`base`, `dev`, `desktop`, `printing`, `media`, `extra`). `[profiles]` names which tags to
+(`base`, `dev`, `desktop`, `security`, `printing`, `media`, `extra`). `[profiles]` names which tags to
 combine — currently `workstation` (everything, full KDE desktop) and `homelab-server`
 (`base` + `dev`, no desktop/GUI packages at all). `template_config.py` always
 overwrites `user_configuration.json`'s `packages` array with the resolved list, so that
@@ -80,6 +80,10 @@ after `10-theme.conf`.
 
 If it includes the `printing` tag, the same pass enables `cups.socket`. Installing CUPS
 doesn't enable it, and without it even `cups-pdf`'s print-to-PDF queue doesn't work.
+
+If it includes the `security` tag, the same pass enables `pcscd.socket`, the smart card
+daemon that `ykman`'s OTP and PIV commands reach the YubiKey through. FIDO2 SSH keys
+don't need it, but nothing else enables it either.
 
 `check_packages.py` checks every resolved package against `pacman -Si`, so a typo,
 renamed package, or an AUR-only package that pacman can't install gets caught before
