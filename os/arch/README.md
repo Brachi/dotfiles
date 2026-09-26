@@ -139,7 +139,7 @@ on the live ISO if missing.
 ### Wifi (carried over automatically)
 
 `network_config.type` is `"nm_iwd"` — NetworkManager (so the desktop gets a proper
-network applet via `network-manager-applet`) using `iwd` as its wifi backend. If you
+network applet: Plasma's `plasma-nm`, part of `plasma-meta`) using `iwd` as its wifi backend. If you
 connected to wifi on the live ISO with `iwctl` before running this, `install.py` copies
 that connection's saved profile from `/var/lib/iwd/` to the target after `archinstall`
 finishes, so it's already connected on first boot — no need to reconnect manually.
