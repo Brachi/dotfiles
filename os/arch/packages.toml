@@ -23,16 +23,16 @@ packages = [
 # Matches this laptop's CLI dev stack.
 packages = [
     "cloc", "cmake", "docker", "emscripten", "github-cli", "jdk-openjdk",
-    "neovim", "nodejs", "npm", "python", "rustup", "sbt", "uv",
+    "neovim", "nodejs", "npm", "python", "uv",
 ]
 
 [tags.desktop]
 # KDE Plasma + the GUI-only bits that go with it.
 packages = [
-    "alacritty", "arch-audit-gtk", "chromium", "firefox", "konsole",
-    "libinput-tools", "libpulse", "noto-fonts-cjk", "pipewire",
-    "pipewire-alsa", "pipewire-pulse", "plasma-meta", "sddm", "spectacle",
-    "ttf-hack-nerd", "vulkan-intel", "wireplumber", "wl-clipboard",
+    "alacritty", "arch-audit-gtk", "chromium", "firefox", "libinput-tools",
+    "libpulse", "noto-fonts-cjk", "pipewire", "pipewire-alsa",
+    "pipewire-pulse", "plasma-meta", "sddm", "spectacle", "ttf-hack-nerd",
+    "vulkan-intel", "wireplumber", "wl-clipboard",
 ]
 
 [tags.printing]
@@ -44,8 +44,7 @@ packages = [
 
 [tags.media]
 packages = [
-    "audacity", "blender", "elisa", "gimp", "godot", "inkscape", "kew",
-    "koko", "krita", "mpv", "yt-dlp",
+    "audacity", "blender", "gimp", "kew", "koko", "krita", "mpv",
 ]
 
 [tags.extra]
