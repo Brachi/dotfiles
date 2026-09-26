@@ -10,9 +10,9 @@
 [tags.base]
 # CLI essentials wanted on every machine, GUI or not.
 packages = [
-    "base-devel", "ccid", "chafa", "direnv", "efibootmgr", "exfat-utils",
-    "firejail", "git", "git-lfs", "gnupg", "htop", "intel-ucode",
-    "libfido2", "linux", "linux-firmware", "man-db",
+    "arch-audit", "base-devel", "ccid", "chafa", "direnv", "efibootmgr",
+    "exfat-utils", "firejail", "git", "git-lfs", "gnupg", "htop",
+    "intel-ucode", "libfido2", "linux", "linux-firmware", "man-db",
     "networkmanager", "nmap", "openssh", "7zip", "pacman-contrib",
     "pass", "pcsclite", "ranger", "ripgrep", "rsync", "sof-firmware",
     "tmux", "tree-sitter-cli", "unrar", "unzip", "watchexec", "yazi",
@@ -22,18 +22,18 @@ packages = [
 [tags.dev]
 # Matches this laptop's CLI dev stack.
 packages = [
-    "cmake", "docker", "emscripten", "github-cli", "neovim", "nodejs", "npm",
-    "python", "rustup", "sbt",
+    "cloc", "cmake", "docker", "emscripten", "github-cli", "jdk-openjdk",
+    "neovim", "nodejs", "npm", "python", "rustup", "sbt",
 ]
 
 [tags.desktop]
 # KDE Plasma + the GUI-only bits that go with it.
 packages = [
-    "alacritty", "chromium", "cups", "cups-pdf", "firefox", "konsole",
-    "libinput-tools", "libpulse", "noto-fonts-cjk", "pipewire",
-    "pipewire-alsa", "pipewire-pulse", "plasma-meta", "sddm", "spectacle",
-    "system-config-printer", "ttf-hack-nerd", "vulkan-intel", "wireplumber",
-    "wl-clipboard",
+    "alacritty", "arch-audit-gtk", "chromium", "cups", "cups-pdf",
+    "firefox", "konsole", "libinput-tools", "libpulse", "noto-fonts-cjk",
+    "pipewire", "pipewire-alsa", "pipewire-pulse", "plasma-meta", "sddm",
+    "spectacle", "system-config-printer", "ttf-hack-nerd", "vulkan-intel",
+    "wireplumber", "wl-clipboard",
 ]
 
 [tags.server]
@@ -41,8 +41,8 @@ packages = ["caddy"]
 
 [tags.media]
 packages = [
-    "audacity", "beets", "blender", "elisa", "gimp", "godot", "inkscape",
-    "kew", "koko", "krita", "mpv", "yt-dlp",
+    "audacity", "blender", "elisa", "gimp", "godot", "inkscape", "kew",
+    "koko", "krita", "mpv", "yt-dlp",
 ]
 
 [tags.extra]
