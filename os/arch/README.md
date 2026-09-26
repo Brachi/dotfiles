@@ -158,6 +158,14 @@ package list changes were needed. This only affects the *installed* system's con
 that separately and temporarily with `pacman -Sy terminus-font && setfont ter-132n` if
 needed.
 
+### Printer and scanner (manual, after first boot)
+
+`setup-printer.sh` sets up the home Brother MFC-J1010DW, driverless both ways: AirPrint
+through CUPS for printing, eSCL through `sane-airscan` for scanning. No vendor drivers
+or AUR packages. It's specific to this printer on the home network, so it isn't part of
+`install.py`; run it once on each machine that should use it (it `sudo`s as needed, and
+re-running it is safe). It also enables `cups.socket`, which nothing else does.
+
 ### Running archinstall directly
 
 ```sh
