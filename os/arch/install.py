@@ -208,6 +208,18 @@ def copy_wifi_config(mnt: Path) -> int:
     return len(psks)
 
 
+def set_sddm_theme(mnt: Path) -> None:
+    """Use Breeze for the SDDM login screen. It ships with plasma-desktop and
+    runs on the Qt6 greeter; the themes bundled with sddm itself (elarun,
+    maldives, maya) are Qt5 and need qt5-declarative, without which the
+    greeter can't draw them and login breaks. A drop-in under sddm.conf.d
+    rather than kde_settings.conf, which System Settings owns and rewrites."""
+    sddm_dropin = Path(mnt, "etc/sddm.conf.d/10-theme.conf")
+    sddm_dropin.parent.mkdir(parents=True, exist_ok=True)
+    sddm_dropin.write_text("[Theme]\nCurrent=breeze\n")
+    print("Set the SDDM login theme to Breeze.")
+
+
 def profile_has_tag(profile: str, tag: str) -> bool:
     data = tomllib.loads(Path(HERE, "packages.toml").read_text())
     return tag in data.get("profiles", {}).get(profile, [])
@@ -286,7 +298,8 @@ def main() -> None:
 
     has_wifi = bool(list(Path("/var/lib/iwd").glob("*.psk"))) if Path("/var/lib/iwd").exists() else False
     install_claude = profile_has_tag(args.profile, "dev")
-    if pubkeys or has_wifi or install_claude:
+    has_desktop = profile_has_tag(args.profile, "desktop")
+    if pubkeys or has_wifi or install_claude or has_desktop:
         with mounted_target(device, luks_passphrase, hostname) as mnt:
             if pubkeys:
                 provision_ssh_access(mnt, username, pubkeys)
@@ -294,6 +307,8 @@ def main() -> None:
                 print(f"Copied {wifi_count} wifi network profile(s) - should auto-connect on first boot.")
             if install_claude:
                 install_claude_code(mnt)
+            if has_desktop:
+                set_sddm_theme(mnt)
     args.ssh_keys.unlink(missing_ok=True)
 
     if args.keep_creds:

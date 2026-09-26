@@ -77,6 +77,13 @@ environment is needed first since nothing's running yet inside a bare chroot to 
 DNS. A failure here only warns (with the manual command to run later) rather than
 failing the whole install, since it's a nice-to-have, not install-critical.
 
+If it includes the `desktop` tag, the same pass sets the SDDM login theme to Breeze via
+`/etc/sddm.conf.d/10-theme.conf`. Breeze ships with Plasma and runs on SDDM's Qt6
+greeter; the themes bundled with `sddm` itself (elarun, maldives, maya) are Qt5 and
+won't draw without `qt5-declarative`, which leaves you unable to log in. A theme picked
+later in System Settings still wins: it's saved to `kde_settings.conf`, which sorts
+after `10-theme.conf`.
+
 `check_packages.py` checks every resolved package against `pacman -Si`, so a typo,
 renamed package, or an AUR-only package that pacman can't install gets caught before
 the wipe confirmation, not partway through `pacstrap` after the disk is already gone.
