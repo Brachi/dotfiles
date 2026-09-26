@@ -220,6 +220,14 @@ def set_sddm_theme(mnt: Path) -> None:
     print("Set the SDDM login theme to Breeze.")
 
 
+def enable_cups(mnt: Path) -> None:
+    """Enable CUPS, socket-activated so it only runs once something prints.
+    Installing the package doesn't enable it, and without it even cups-pdf's
+    print-to-PDF queue has nothing to talk to."""
+    run(["arch-chroot", str(mnt), "systemctl", "enable", "cups.socket"])
+    print("Enabled CUPS (cups.socket).")
+
+
 def profile_has_tag(profile: str, tag: str) -> bool:
     data = tomllib.loads(Path(HERE, "packages.toml").read_text())
     return tag in data.get("profiles", {}).get(profile, [])
@@ -299,7 +307,8 @@ def main() -> None:
     has_wifi = bool(list(Path("/var/lib/iwd").glob("*.psk"))) if Path("/var/lib/iwd").exists() else False
     install_claude = profile_has_tag(args.profile, "dev")
     has_desktop = profile_has_tag(args.profile, "desktop")
-    if pubkeys or has_wifi or install_claude or has_desktop:
+    has_printing = profile_has_tag(args.profile, "printing")
+    if pubkeys or has_wifi or install_claude or has_desktop or has_printing:
         with mounted_target(device, luks_passphrase, hostname) as mnt:
             if pubkeys:
                 provision_ssh_access(mnt, username, pubkeys)
@@ -309,6 +318,8 @@ def main() -> None:
                 install_claude_code(mnt)
             if has_desktop:
                 set_sddm_theme(mnt)
+            if has_printing:
+                enable_cups(mnt)
     args.ssh_keys.unlink(missing_ok=True)
 
     if args.keep_creds:

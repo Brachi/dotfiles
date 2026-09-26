@@ -29,11 +29,17 @@ packages = [
 [tags.desktop]
 # KDE Plasma + the GUI-only bits that go with it.
 packages = [
-    "alacritty", "arch-audit-gtk", "chromium", "cups", "cups-pdf",
-    "firefox", "konsole", "libinput-tools", "libpulse", "noto-fonts-cjk",
-    "pipewire", "pipewire-alsa", "pipewire-pulse", "plasma-meta",
-    "sane-airscan", "sddm", "skanpage", "spectacle", "system-config-printer",
+    "alacritty", "arch-audit-gtk", "chromium", "firefox", "konsole",
+    "libinput-tools", "libpulse", "noto-fonts-cjk", "pipewire",
+    "pipewire-alsa", "pipewire-pulse", "plasma-meta", "sddm", "spectacle",
     "ttf-hack-nerd", "vulkan-intel", "wireplumber", "wl-clipboard",
+]
+
+[tags.printing]
+# CUPS (install.py enables cups.socket for this tag) plus driverless scanning.
+# Printer-specific setup lives in setup-printer.sh.
+packages = [
+    "cups", "cups-pdf", "sane-airscan", "skanpage", "system-config-printer",
 ]
 
 [tags.media]
@@ -50,5 +56,5 @@ packages = [
 ]
 
 [profiles]
-workstation = ["base", "dev", "desktop", "media", "extra"]
+workstation = ["base", "dev", "desktop", "printing", "media", "extra"]
 homelab-server = ["base", "dev"]

@@ -56,7 +56,7 @@ To edit by hand instead, replace the two `CHANGEME` values in `user_configuratio
 ### Packages and profiles
 
 `packages.toml` is the single source of truth for packages, tagged by purpose
-(`base`, `dev`, `desktop`, `media`, `extra`). `[profiles]` names which tags to
+(`base`, `dev`, `desktop`, `printing`, `media`, `extra`). `[profiles]` names which tags to
 combine — currently `workstation` (everything, full KDE desktop) and `homelab-server`
 (`base` + `dev`, no desktop/GUI packages at all). `template_config.py` always
 overwrites `user_configuration.json`'s `packages` array with the resolved list, so that
@@ -83,6 +83,9 @@ greeter; the themes bundled with `sddm` itself (elarun, maldives, maya) are Qt5 
 won't draw without `qt5-declarative`, which leaves you unable to log in. A theme picked
 later in System Settings still wins: it's saved to `kde_settings.conf`, which sorts
 after `10-theme.conf`.
+
+If it includes the `printing` tag, the same pass enables `cups.socket`. Installing CUPS
+doesn't enable it, and without it even `cups-pdf`'s print-to-PDF queue doesn't work.
 
 `check_packages.py` checks every resolved package against `pacman -Si`, so a typo,
 renamed package, or an AUR-only package that pacman can't install gets caught before
@@ -164,7 +167,8 @@ needed.
 through CUPS for printing, eSCL through `sane-airscan` for scanning. No vendor drivers
 or AUR packages. It's specific to this printer on the home network, so it isn't part of
 `install.py`; run it once on each machine that should use it (it `sudo`s as needed, and
-re-running it is safe). It also enables `cups.socket`, which nothing else does.
+re-running it is safe). It expects CUPS to be running already (see the `printing` tag
+above) and says how to enable it if not, e.g. on a machine this installer didn't set up.
 
 ### Running archinstall directly
 

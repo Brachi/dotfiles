@@ -1,7 +1,8 @@
 #!/usr/bin/bash
 # Home printer/scanner: Brother MFC-J1010DW, driverless both ways - AirPrint
 # (IPP Everywhere) for printing, eSCL for scanning - so no vendor drivers or
-# AUR packages. Needs cups and sane-airscan (desktop tag in packages.toml).
+# AUR packages. Needs the `printing` tag from packages.toml installed, with
+# CUPS running (install.py enables it for that tag).
 #
 # Addresses the printer by the hostname it registers with the router, not an
 # IP, so a new DHCP lease doesn't break it. The scanner is listed explicitly
@@ -13,7 +14,10 @@ set -euo pipefail
 HOST=BRW3C0AF349AF8B.lan
 QUEUE=MFC-J1010DW-airprint
 
-sudo systemctl enable --now cups.socket
+if ! systemctl is-active --quiet cups.socket cups.service; then
+    echo "CUPS isn't running. Enable it first: sudo systemctl enable --now cups.socket" >&2
+    exit 1
+fi
 
 sudo lpadmin -p "$QUEUE" -D "Brother MFC-J1010DW" -E -v "ipp://$HOST/ipp/print" -m everywhere
 sudo lpadmin -d "$QUEUE"
