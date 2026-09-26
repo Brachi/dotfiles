@@ -19,3 +19,6 @@ ln -fs "$SRC_XDG_CONFIG/plasmaparc" $DST_XDG_CONFIG
 ln -fs "$SRC_XDG_CONFIG/bash/bash_aliases" $HOME/.bash_aliases
 ln -fs "$SRC_XDG_CONFIG/bash/bashrc" $HOME/.bashrc
 ln -fs "$SRC_XDG_CONFIG/bash/bash_profile" $HOME/.bash_profile
+
+# KDE: no buttons left of the window title (drops the app icon/menu and "on all desktops")
+kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key ButtonsOnLeft ""
