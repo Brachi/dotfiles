@@ -32,7 +32,7 @@ packages = [
 packages = [
     "adobe-source-sans-fonts", "alacritty", "chromium", "cups", "cups-pdf",
     "firefox", "gedit", "gst-plugin-pipewire", "konsole", "libinput-tools",
-    "libpulse", "network-manager-applet", "pipewire", "pipewire-alsa",
+    "libpulse", "network-manager-applet", "noto-fonts-cjk", "pipewire", "pipewire-alsa",
     "pipewire-jack", "pipewire-pulse", "plasma-meta", "qt5-wayland",
     "sddm", "skanpage", "spectacle",
     "system-config-printer", "ttf-hack-nerd", "ttf-roboto", "vulkan-intel",
