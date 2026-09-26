@@ -23,18 +23,17 @@ packages = [
 # Matches this laptop's CLI dev stack.
 packages = [
     "cmake", "docker", "emscripten", "github-cli", "neovim", "nodejs", "npm",
-    "patchelf", "python", "radare2", "rustup", "sbt", "wabt", "wasmer",
-    "wasmtime",
+    "python", "rustup", "sbt",
 ]
 
 [tags.desktop]
 # KDE Plasma + the GUI-only bits that go with it.
 packages = [
-    "adobe-source-sans-fonts", "alacritty", "chromium", "cups", "cups-pdf",
-    "firefox", "konsole", "libinput-tools", "libpulse", "noto-fonts-cjk",
-    "pipewire", "pipewire-alsa", "pipewire-pulse", "plasma-meta", "sddm",
-    "skanpage", "spectacle", "system-config-printer", "ttf-hack-nerd",
-    "ttf-roboto", "vulkan-intel", "wireplumber", "wl-clipboard",
+    "alacritty", "chromium", "cups", "cups-pdf", "firefox", "konsole",
+    "libinput-tools", "libpulse", "noto-fonts-cjk", "pipewire",
+    "pipewire-alsa", "pipewire-pulse", "plasma-meta", "sddm", "skanpage",
+    "spectacle", "system-config-printer", "ttf-hack-nerd", "vulkan-intel",
+    "wireplumber", "wl-clipboard",
 ]
 
 [tags.server]
@@ -50,9 +49,7 @@ packages = [
 # Everything else from the old lists that doesn't fit a clean category yet -
 # fine to re-tag more precisely later.
 packages = [
-    "gnucash", "libreoffice-fresh", "steam", "texlive-fontsextra",
-    "texlive-fontsrecommended", "texlive-latexextra", "texlive-luatex",
-    "texlive-xetex", "virtualbox",
+    "gnucash", "libreoffice-fresh", "steam", "virtualbox",
 ]
 
 [profiles]
