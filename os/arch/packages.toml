@@ -52,7 +52,7 @@ packages = [
 # Everything else from the old lists that doesn't fit a clean category yet -
 # fine to re-tag more precisely later.
 packages = [
-    "gnucash", "libreoffice-fresh", "steam", "virtualbox",
+    "gnucash", "libreoffice-fresh", "steam",
 ]
 
 [profiles]
