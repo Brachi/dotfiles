@@ -10,49 +10,41 @@
 [tags.base]
 # CLI essentials wanted on every machine, GUI or not.
 packages = [
-    "arch-audit", "base-devel", "ccid", "chafa", "direnv", "efibootmgr",
-    "exfat-utils", "firejail", "git", "git-lfs", "gnupg", "htop",
+    "arch-audit", "base-devel", "ccid", "efibootmgr", "git", "gnupg",
     "intel-ucode", "libfido2", "linux", "linux-firmware", "man-db",
-    "networkmanager", "nmap", "openssh", "7zip", "pacman-contrib",
-    "pass", "pcsclite", "ranger", "ripgrep", "rsync", "sof-firmware",
-    "tmux", "tree-sitter-cli", "unrar", "unzip", "watchexec", "yazi",
-    "yubikey-manager", "zip", "zram-generator",
+    "networkmanager", "openssh", "pacman-contrib", "pass", "pcsclite",
+    "ranger", "ripgrep", "rsync", "sof-firmware", "tmux", "tree-sitter-cli",
+    "unzip", "yubikey-manager", "zip", "zram-generator",
 ]
 
 [tags.dev]
 # Matches this laptop's CLI dev stack.
 packages = [
-    "cloc", "cmake", "docker", "emscripten", "github-cli", "jdk-openjdk",
-    "neovim", "nodejs", "npm", "python", "uv",
+    "docker", "github-cli", "neovim", "nodejs", "npm", "python", "uv",
 ]
 
 [tags.desktop]
 # KDE Plasma + the GUI-only bits that go with it.
 packages = [
-    "alacritty", "arch-audit-gtk", "chromium", "firefox", "libinput-tools",
-    "libpulse", "noto-fonts-cjk", "pipewire", "pipewire-alsa",
-    "pipewire-pulse", "plasma-meta", "sddm", "spectacle", "ttf-hack-nerd",
-    "vulkan-intel", "wireplumber", "wl-clipboard",
+    "alacritty", "arch-audit-gtk", "firefox", "noto-fonts-cjk", "pipewire",
+    "pipewire-alsa", "pipewire-pulse", "plasma-meta", "sddm",
+    "ttf-hack-nerd", "vulkan-intel", "wireplumber", "wl-clipboard",
 ]
 
 [tags.printing]
 # CUPS (install.py enables cups.socket for this tag) plus driverless scanning.
 # Printer-specific setup lives in setup-printer.sh.
-packages = [
-    "cups", "cups-pdf", "sane-airscan", "skanpage", "system-config-printer",
-]
+packages = ["cups", "cups-pdf", "sane-airscan", "skanpage"]
 
 [tags.media]
 packages = [
-    "audacity", "blender", "gimp", "kew", "koko", "krita", "mpv",
+    "blender", "kew", "koko", "krita", "mpv", "steam",
 ]
 
 [tags.extra]
 # Everything else from the old lists that doesn't fit a clean category yet -
 # fine to re-tag more precisely later.
-packages = [
-    "gnucash", "libreoffice-fresh", "steam",
-]
+packages = ["gnucash", "libreoffice-fresh"]
 
 [profiles]
 workstation = ["base", "dev", "desktop", "printing", "media", "extra"]
