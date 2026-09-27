@@ -47,3 +47,56 @@ require("lazy").setup({
 -- after/lsp/ holds local settings.
 vim.lsp.enable({ "lua_ls", "ts_ls", "pylsp", "ruff" })
 vim.keymap.set('n', 'gd', vim.lsp.buf.definition)
+-- Peek at the definition in a floating window over the real file. q or
+-- moving to another window closes it. on_list only runs when a definition
+-- was found.
+vim.keymap.set('n', '<leader>gd', function()
+    vim.lsp.buf.definition({
+        on_list = function(list)
+            local item = list.items[1]
+            local buf = vim.fn.bufadd(item.filename)
+            vim.fn.bufload(buf)
+            local win = vim.api.nvim_open_win(buf, true, {
+                relative = 'cursor', row = 1, col = 0,
+                width = math.min(100, vim.o.columns - 4),
+                height = math.min(20, vim.o.lines - 6),
+                border = 'rounded',
+                title = ' ' .. vim.fn.fnamemodify(item.filename, ':~:.') .. ' ',
+            })
+            vim.api.nvim_win_set_cursor(win, { item.lnum, item.col - 1 })
+            vim.cmd('normal! zt')
+
+            -- q is buffer-local, so map it on every buffer the peek shows
+            -- (gd inside it loads another) and unmap it when the peek closes.
+            local mapped = {}
+            local function map_q()
+                local b = vim.api.nvim_get_current_buf()
+                if not mapped[b] and vim.fn.maparg('q', 'n', false, true).buffer ~= 1 then
+                    vim.keymap.set('n', 'q', '<cmd>close<cr>', { buffer = b })
+                    mapped[b] = true
+                end
+            end
+            map_q()
+            local group = vim.api.nvim_create_augroup('peek', { clear = true })
+            vim.api.nvim_create_autocmd('BufWinEnter', {
+                group = group,
+                callback = function()
+                    if vim.api.nvim_get_current_win() == win then map_q() end
+                end,
+            })
+            vim.api.nvim_create_autocmd('WinLeave', {
+                group = group,
+                callback = function()
+                    if vim.api.nvim_get_current_win() ~= win then return end
+                    vim.api.nvim_del_augroup_by_id(group)
+                    for b in pairs(mapped) do
+                        if vim.api.nvim_buf_is_valid(b) then
+                            pcall(vim.keymap.del, 'n', 'q', { buffer = b })
+                        end
+                    end
+                    vim.schedule(function() pcall(vim.api.nvim_win_close, win, true) end)
+                end,
+            })
+        end,
+    })
+end)
