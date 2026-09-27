@@ -38,7 +38,9 @@ packages = [
 packages = [
     "alacritty", "arch-audit-gtk", "firefox", "noto-fonts-cjk", "pipewire",
     "pipewire-alsa", "pipewire-pulse", "plasma-meta", "sddm",
-    "ttf-hack-nerd", "vulkan-intel", "wireplumber", "wl-clipboard",
+    "ttf-hack", "vulkan-intel", "wireplumber", "wl-clipboard",
+    # Nerd Font icons for every terminal and font, via a fontconfig fallback.
+    "ttf-nerd-fonts-symbols",
 ]
 
 [tags.printing]
