@@ -1,3 +1,0 @@
-[submodule "config/nvim/pack/gnupg/start/vim-gnupg"]
-	path = config/nvim/pack/gnupg/start/vim-gnupg
-	url = https://github.com/jamessan/vim-gnupg.git
