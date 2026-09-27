@@ -24,6 +24,9 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
+-- Show diagnostic messages at the end of the line, not just a sign.
+vim.diagnostic.config({ virtual_text = true })
+
 -- Bootstrap lazy.nvim
 -- https://lazy.folke.io/installation
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"

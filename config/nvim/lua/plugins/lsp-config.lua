@@ -15,21 +15,28 @@ return {
                 }
             }
         })
+        -- pylsp only provides hover, definitions and completion; ruff lints.
         vim.lsp.config("pylsp", {
                 settings = {
                     pylsp = {
                       plugins = {
+                        pycodestyle = { enabled = false },
                         pyflakes = { enabled = false },
-                        pycodestyle = {
-                          ignore = {'W391'},
-                          maxLineLength = 110
-                        }
+                        mccabe = { enabled = false },
                       }
                     }
                 }
 
         })
-        vim.lsp.enable({ "lua_ls", "ts_ls", "pylsp" })
+        vim.lsp.config("ruff", {
+            init_options = {
+                settings = {
+                    lineLength = 110,
+                    lint = { extendSelect = { "E", "W" } },
+                }
+            }
+        })
+        vim.lsp.enable({ "lua_ls", "ts_ls", "pylsp", "ruff" })
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, {})
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
     end

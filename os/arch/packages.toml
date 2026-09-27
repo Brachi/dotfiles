@@ -28,9 +28,8 @@ packages = [
 packages = [
     "docker", "github-cli", "lua-language-server", "neovim", "nodejs", "npm",
     "python",
-    # Neovim's language servers; pycodestyle is the only pylsp plugin the
-    # config uses.
-    "python-lsp-server", "python-pycodestyle", "typescript-language-server",
+    # Neovim's language servers; ruff lints Python, pylsp handles the rest.
+    "python-lsp-server", "ruff", "typescript-language-server",
     "uv",
 ]
 
