@@ -7,10 +7,7 @@ return {
             settings = {
                 Lua = {
                     diagnostics = {
-                        globals = {
-                            'vim',
-                            'require'
-                        }
+                        globals = { 'vim' }
                     }
                 }
             }
@@ -37,7 +34,6 @@ return {
             }
         })
         vim.lsp.enable({ "lua_ls", "ts_ls", "pylsp", "ruff" })
-        vim.keymap.set('n', 'K', vim.lsp.buf.hover, {})
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
     end
     },
