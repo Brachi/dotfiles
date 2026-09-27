@@ -10,8 +10,8 @@
 [tags.base]
 # CLI essentials wanted on every machine, GUI or not.
 packages = [
-    "arch-audit", "base-devel", "efibootmgr", "git", "intel-ucode", "linux",
-    "linux-firmware", "man-db", "networkmanager", "openssh",
+    "arch-audit", "base", "base-devel", "efibootmgr", "git", "intel-ucode",
+    "linux", "linux-firmware", "man-db", "networkmanager", "openssh",
     "pacman-contrib", "ranger", "ripgrep", "rsync", "sof-firmware", "tmux",
     "tree-sitter-cli", "unzip", "zip", "zram-generator",
 ]
