@@ -9,8 +9,9 @@ return {
     "williamboman/mason-lspconfig.nvim",
     config = function()
         require("mason-lspconfig").setup({
-                ensure_installed = { "lua_ls", "tsserver", "pylsp"}
-
+                ensure_installed = { "lua_ls", "ts_ls", "pylsp"},
+                -- Servers are enabled explicitly below.
+                automatic_enable = false,
         })
     end
     },
@@ -18,8 +19,7 @@ return {
     {
     "neovim/nvim-lspconfig",
     config = function()
-        local lspconfig = require("lspconfig")
-        lspconfig.lua_ls.setup{
+        vim.lsp.config("lua_ls", {
             settings = {
                 Lua = {
                     diagnostics = {
@@ -30,9 +30,8 @@ return {
                     }
                 }
             }
-        }
-        lspconfig.tsserver.setup({})
-        lspconfig.pylsp.setup({
+        })
+        vim.lsp.config("pylsp", {
                 settings = {
                     pylsp = {
                       plugins = {
@@ -46,6 +45,7 @@ return {
                 }
 
         })
+        vim.lsp.enable({ "lua_ls", "ts_ls", "pylsp" })
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, {})
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
     end
