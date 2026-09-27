@@ -6,14 +6,23 @@ vim.opt.statusline = "%l/%L %f"
 vim.opt.clipboard = 'unnamedplus'
 vim.opt.expandtab = true
 vim.opt.tabstop = 4
+vim.opt.shiftwidth = 0     -- follow tabstop
+vim.opt.softtabstop = -1   -- follow shiftwidth
 vim.opt.list = true
-vim.opt.autoindent = true
-vim.opt.smartindent = true
 vim.opt.listchars:append {
     tab = ">-",
     nbsp = ".",
     trail = "•"
 }
+
+-- Two-space indent where Nvim's own ftplugins don't already set it
+-- (they do for yaml; python, markdown and rust get 4).
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "css", "html", "json" },
+    callback = function()
+        vim.opt_local.tabstop = 2
+    end,
+})
 
 -- Bootstrap lazy.nvim
 -- https://lazy.folke.io/installation
