@@ -1,21 +1,5 @@
 return {
-    {
-    "williamboman/mason.nvim",
-    config = function()
-        require("mason").setup()
-    end
-    },
-    {
-    "williamboman/mason-lspconfig.nvim",
-    config = function()
-        require("mason-lspconfig").setup({
-                ensure_installed = { "lua_ls", "ts_ls", "pylsp"},
-                -- Servers are enabled explicitly below.
-                automatic_enable = false,
-        })
-    end
-    },
-
+    -- Language servers come from pacman (see os/arch/packages.toml).
     {
     "neovim/nvim-lspconfig",
     config = function()
